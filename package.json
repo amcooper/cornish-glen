@@ -17,6 +17,7 @@
     "pg": "^7.7.1"
   },
   "devDependencies": {
+    "chance": "^1.0.18",
     "husky": "^1.2.0",
     "nodemon": "^1.18.8"
   }
