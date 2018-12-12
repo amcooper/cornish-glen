@@ -1,3 +1,4 @@
+// Check this for defaults and cascades
 
 exports.up = function(knex, Promise) {
   return Promise.all([
@@ -9,9 +10,9 @@ exports.up = function(knex, Promise) {
           table.string("subhed");
           table.string("excerpt");
           table.string("image_url");
-          table.string("body");
-          table.string("publication_time");
-          table.string("publication_status");
+          table.text("body");
+          table.dateTime("publication_time");
+          table.enu("publication_status", ["draft", "published"]).defaultTo("draft");
           table.timestamps();
         });
       }
@@ -66,7 +67,7 @@ exports.up = function(knex, Promise) {
 
     knex.schema.hasTable("links").then( exists => {
       if (!exists) {
-        return knex.schema.createTable("tags", table => {
+        return knex.schema.createTable("links", table => {
           table.increments();
           table.string("name");
           table.string("description");
@@ -95,9 +96,9 @@ exports.up = function(knex, Promise) {
           table.increments();
           table.string("title");
           table.string("subtitle");
-          table.string("body");
-          table.string("publication_time");
-          table.string("publication_status");
+          table.text("body");
+          table.dateTime("publication_time");
+          table.enu("publication_status", ["published", "draft"]).defaultTo("draft");
           table.timestamps();
         });
       }
@@ -108,11 +109,11 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
   return Promise.all([
+    knex.schema.dropTableIfExists("authors_articles"),
+    knex.schema.dropTableIfExists("articles_tags"),
     knex.schema.dropTableIfExists("articles"),
     knex.schema.dropTableIfExists("authors"),
     knex.schema.dropTableIfExists("tags"),
-    knex.schema.dropTableIfExists("authors_articles"),
-    knex.schema.dropTableIfExists("articles_tags"),
     knex.schema.dropTableIfExists("links"),
     knex.schema.dropTableIfExists("categories"),
     knex.schema.dropTableIfExists("pages")
