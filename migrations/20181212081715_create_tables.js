@@ -8,28 +8,113 @@ exports.up = function(knex, Promise) {
           table.string("headline");
           table.string("subhed");
           table.string("excerpt");
-          table.string("imageUrl");
+          table.string("image_url");
           table.string("body");
-          table.string("publicationTime");
-          table.string("publicationStatus");
+          table.string("publication_time");
+          table.string("publication_status");
           table.timestamps();
         });
       }
     }),
 
-    knex.schema.hasTable("authors").then( exists => {}),
+    knex.schema.hasTable("authors").then( exists => {
+      if (!exists) {
+        return knex.schema.createTable("authors", table => {
+          table.increments();
+          table.string("name");
+          table.string("sort_name");
+          table.string("email");
+          table.timestamps();
+        });
+      }
+    }),
 
-    knex.schema.hasTable("authors").then( exists => {}),
+    knex.schema.hasTable("tags").then( exists => {
+      if (!exists) {
+        return knex.schema.createTable("tags", table => {
+          table.increments();
+          table.string("name");
+          table.string("description");
+          table.timestamps();
+        });
+      }
+    }),
 
-    knex.schema.hasTable("authors").then( exists => {}),
+    knex.schema.hasTable("authors_articles").then( exists => {
+      if (!exists) {
+        return knex.schema.createTable("authors_articles", table => {
+          table.increments();
+          table.integer("author_id").unsigned().notNullable();
+          table.integer("article_id").unsigned().notNullable();
+          table.foreign("author_id").references("id").inTable("authors");
+          table.foreign("article_id").references("id").inTable("articles");
+        })
+      }
+    }),
 
-    knex.schema.hasTable("authors").then( exists => {}),
+    knex.schema.hasTable("articles_tags").then( exists => {
+      if (!exists) {
+        return knex.schema.createTable("articles_tags", table => {
+          table.increments();
+          table.integer("tag_id").unsigned().notNullable();
+          table.integer("article_id").unsigned().notNullable();
+          table.foreign("tag_id").references("id").inTable("tags");
+          table.foreign("article_id").references("id").inTable("articles");
+        })
+      }
+    }),
 
-    knex.schema.hasTable("authors").then( exists => {}),
+    knex.schema.hasTable("links").then( exists => {
+      if (!exists) {
+        return knex.schema.createTable("tags", table => {
+          table.increments();
+          table.string("name");
+          table.string("description");
+          table.string("url");
+          table.integer("category_id").unsigned().notNullable();
+          table.foreign("category_id").references("id").inTable("categories");
+          table.timestamps();
+        });
+      }
+    }),
+
+    knex.schema.hasTable("categories").then( exists => {
+      if (!exists) {
+        return knex.schema.createTable("categories", table => {
+          table.increments();
+          table.string("name");
+          table.string("description");
+          table.timestamps();
+        });
+      }
+    }),
+
+    knex.schema.hasTable("pages").then( exists => {
+      if (!exists) {
+        return knex.schema.createTable("pages", table => {
+          table.increments();
+          table.string("title");
+          table.string("subtitle");
+          table.string("body");
+          table.string("publication_time");
+          table.string("publication_status");
+          table.timestamps();
+        });
+      }
+    }),
 
   ]) 
 };
 
 exports.down = function(knex, Promise) {
-  
+  return Promise.all([
+    knex.schema.dropTableIfExists("articles"),
+    knex.schema.dropTableIfExists("authors"),
+    knex.schema.dropTableIfExists("tags"),
+    knex.schema.dropTableIfExists("authors_articles"),
+    knex.schema.dropTableIfExists("articles_tags"),
+    knex.schema.dropTableIfExists("links"),
+    knex.schema.dropTableIfExists("categories"),
+    knex.schema.dropTableIfExists("pages")
+  ])
 };
