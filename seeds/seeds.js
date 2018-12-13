@@ -1,4 +1,113 @@
 const chance = require("chance").Chance();
+const ARTICLE_SIZE_SPREAD = 4;
+const ARTICLE_SIZE_MIN = 4;
+const ARTICLE_QTY = 20;
+const AUTHORS_LIST = [{
+  name: "T. T. Olafua",
+  sort_name: "olafua",
+  email: "tt@olafua.com"
+}, {
+  name: "F. A. Renteria",
+  sort_name: "renteria",
+  email: "nachosplease@renteria.media"
+}];
+
+const TAGS_LIST = [{
+  name: "webdev",
+  description: "webdev"
+}, {
+  name: "rust",
+  description: "rust"
+}, {
+  name: "privacy",
+  description: "privacy"
+}, {
+  name: "linux",
+  description: "linux"
+}, {
+  name: "random",
+  description: "random"
+}];
+
+const LINKS_LIST = [{
+  name: "DuckDuckGo",
+  description: "DuckDuckGo",
+  url: "https://ddg.gg",
+  category_id: 1
+}, {
+  name: "Democracy Now!",
+  description: "DN",
+  url: "https://democracynow.org",
+  category_id: 2
+}];
+
+const CATEGORIES_LIST = [{
+  name: "tech", description: "tech"
+}, { 
+  name: "policy", description: "policy"
+}];
+
+const body = () => {
+  let result = "";
+  for (let j = (ARTICLE_SIZE_MIN + Math.floor(Math.random() * ARTICLE_SIZE_SPREAD)); j > 0; j--) {
+    result = result + chance.paragraph() + (j === 1 ? "" : "\n\n");
+  }
+  return result;
+}
+const seedArticles = () => {
+  const articles = [];
+  for (let i = ARTICLE_QTY; i > 0; i--) {
+    articles.push({
+      headline: chance.sentence(),
+      subhed: chance.sentence(),
+      excerpt: "Excerpt " + chance.sentence(),
+      image_url: "https://placekitten.com/200/200",
+      body: body(),
+      publication_time: new Date(Date.now()),
+    });
+  }
+  return articles;
+}
+
+const seedAuthorsArticles = () => {
+  const result = [];
+  let die;
+  for (k = ARTICLE_QTY; k > 0; k--) {
+    die = Math.floor(Math.random() * AUTHORS_LIST.length) + 1;
+    if (die === 0) {
+      result.push({article_id: k, author_id: 1});
+      result.push({article_id: k, author_id: 2});
+    } else {
+      result.push({article_id: k, author_id: die});
+    }
+  }
+  return result;
+}
+
+const seedArticlesTags = () => {
+  const result = [];
+  for (m = ARTICLE_QTY; m > 0; m--) {
+    for (n = TAGS_LIST.length; n > 0; n--) {
+      if (Math.floor(Math.random() < 0.5)) {
+        result.push({article_id: m, tag_id: n});
+      }
+    }
+  }
+  return result;
+}
+
+const seedPages = () => {
+  const result = [];
+  for (p = 2; p > 0; p--) {
+    result.push({
+      title: chance.sentence(),
+      subtitle: chance.sentence(),
+      body: body(),
+      publication_time: chance.timestamp()
+    });
+  }
+  return result;
+}
 
 exports.seed = function(knex, Promise) {
   // Deletes ALL existing entries
@@ -14,25 +123,15 @@ exports.seed = function(knex, Promise) {
   ])
   .then(function () {
     // Inserts seed entries
-    const articles = [];
-    const body = () => {
-      const result = "";
-      for (let j = (4 + Math.floor(Math.random() * 4)); j > 0; j--) {
-        result = result + chance.paragraph() + (j === 1 ? "" : "\n\n");
-      }
-      return result;
-    }
-    for (let i = 20; i > 0; i--) {
-      articles.push({
-        headline: chance.sentence(),
-        subhed: chance.sentence(),
-        excerpt: "Excerpt " + chance.sentence(),
-        image_url: "https://placekitten.com/200/200",
-        body: body(),
-        publication_time: new Date(Date.now()),
-      })
-    }
     return Promise.all([
-      knex('articles').insert(articles); 
+      knex('articles').insert(seedArticles()),
+      knex("authors").insert(AUTHORS_LIST),
+      // knex("authors_articles").insert(seedAuthorsArticles()),
+      knex("tags").insert(TAGS_LIST),
+      // knex("articles_tags").insert(seedArticlesTags()),
+      knex("links").insert(LINKS_LIST),
+      knex("categories").insert(CATEGORIES_LIST),
+      knex("pages").insert(seedPages())
+    ]);
   });
 };
