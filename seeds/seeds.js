@@ -54,6 +54,7 @@ const body = () => {
   }
   return result;
 }
+
 const seedArticles = () => {
   const articles = [];
   for (let i = ARTICLE_QTY; i > 0; i--) {
@@ -63,7 +64,7 @@ const seedArticles = () => {
       excerpt: "Excerpt " + chance.sentence(),
       image_url: "https://placekitten.com/200/200",
       body: body(),
-      publication_time: new Date(Date.now()),
+      // publication_time: new Date(Date.now()),
     });
   }
   return articles;
@@ -102,8 +103,8 @@ const seedPages = () => {
     result.push({
       title: chance.sentence(),
       subtitle: chance.sentence(),
-      body: body(),
-      publication_time: chance.timestamp()
+      body: body()
+      // publication_time: chance.timestamp()
     });
   }
   return result;
@@ -129,7 +130,7 @@ exports.seed = function(knex, Promise) {
       // knex("authors_articles").insert(seedAuthorsArticles()),
       knex("tags").insert(TAGS_LIST),
       // knex("articles_tags").insert(seedArticlesTags()),
-      knex("links").insert(LINKS_LIST),
+      // knex("links").insert(LINKS_LIST),
       knex("categories").insert(CATEGORIES_LIST),
       knex("pages").insert(seedPages())
     ]);
