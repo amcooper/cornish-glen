@@ -5,46 +5,68 @@ const ARTICLE_QTY = 20;
 const AUTHORS_LIST = [{
   name: "T. T. Olafua",
   sort_name: "olafua",
-  email: "tt@olafua.com"
+  email: "tt@olafua.com",
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }, {
   name: "F. A. Renteria",
   sort_name: "renteria",
-  email: "nachosplease@renteria.media"
+  email: "nachosplease@renteria.media",
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }];
 
 const TAGS_LIST = [{
   name: "webdev",
-  description: "webdev"
+  description: "webdev",
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }, {
   name: "rust",
-  description: "rust"
+  description: "rust",
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }, {
   name: "privacy",
-  description: "privacy"
+  description: "privacy",
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }, {
   name: "linux",
-  description: "linux"
+  description: "linux",
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }, {
   name: "random",
-  description: "random"
+  description: "random",
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }];
 
 const LINKS_LIST = [{
   name: "DuckDuckGo",
   description: "DuckDuckGo",
   url: "https://ddg.gg",
-  category_id: 1
+  category_id: 1,
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }, {
   name: "Democracy Now!",
   description: "DN",
   url: "https://democracynow.org",
-  category_id: 2
+  category_id: 2,
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }];
 
 const CATEGORIES_LIST = [{
-  name: "tech", description: "tech"
+  name: "tech", description: "tech",
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }, { 
-  name: "policy", description: "policy"
+  name: "policy", description: "policy",
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
 }];
 
 const body = () => {
@@ -65,6 +87,8 @@ const seedArticles = () => {
       image_url: "https://placekitten.com/200/200",
       body: body(),
       // publication_time: new Date(Date.now()),
+      created_at: new Date(Date.now()),
+      updated_at: new Date(Date.now())
     });
   }
   return articles;
@@ -103,8 +127,10 @@ const seedPages = () => {
     result.push({
       title: chance.sentence(),
       subtitle: chance.sentence(),
-      body: body()
+      body: body(),
       // publication_time: chance.timestamp()
+      created_at: new Date(Date.now()),
+      updated_at: new Date(Date.now())
     });
   }
   return result;
