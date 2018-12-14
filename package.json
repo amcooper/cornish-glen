@@ -7,6 +7,9 @@
   "author": "Adam Cooper",
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "flush-data": "knex migrate:rollback && knex migrate:latest && knex seed:run"
+  },
   "dependencies": {
     "dotenv": "^6.2.0",
     "express": "^4.16.4",

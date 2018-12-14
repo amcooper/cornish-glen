@@ -50,7 +50,7 @@ const CATEGORIES_LIST = [{
 const body = () => {
   let result = "";
   for (let j = (ARTICLE_SIZE_MIN + Math.floor(Math.random() * ARTICLE_SIZE_SPREAD)); j > 0; j--) {
-    result = result + chance.paragraph() + (j === 1 ? "" : "\n\n");
+    result = result + chance.paragraph() + (j === 1 ? "" : "\n");
   }
   return result;
 }
@@ -127,12 +127,16 @@ exports.seed = function(knex, Promise) {
     return Promise.all([
       knex('articles').insert(seedArticles()),
       knex("authors").insert(AUTHORS_LIST),
-      // knex("authors_articles").insert(seedAuthorsArticles()),
       knex("tags").insert(TAGS_LIST),
-      // knex("articles_tags").insert(seedArticlesTags()),
-      // knex("links").insert(LINKS_LIST),
       knex("categories").insert(CATEGORIES_LIST),
       knex("pages").insert(seedPages())
-    ]);
+    ])
+    .then(() => {
+      return Promise.all([
+        knex("authors_articles").insert(seedAuthorsArticles()),
+        knex("articles_tags").insert(seedArticlesTags()),
+        knex("links").insert(LINKS_LIST)
+      ]);
+    });
   });
 };
