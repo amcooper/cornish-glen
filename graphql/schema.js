@@ -66,7 +66,7 @@ module.exports = `
   }
 
   type Query {
-    feed(page: Int): [Article]
+    feed: [Article]
     article(id: ID!): [Article]
   }
 `

@@ -1,9 +1,8 @@
 const Article = require("../../models/Article.js");
 
-const feed = (page) => {
-  return Article.paginate(page)
+const feed = () => {
+  return Article.paginate()
     .then(data => {
-      debugger;
       return data;
     })
     .catch(error => { console.error(error); });
