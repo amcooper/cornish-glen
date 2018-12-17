@@ -1,5 +1,5 @@
 module.exports = `
-  scalar DateTime
+  # scalar DateTime
 
   enum PublicationStatus {
     DRAFT
@@ -11,12 +11,14 @@ module.exports = `
     headline: String!
     subhed: String
     excerpt: String
+    authors: [Author]
+    tags: [Tag]
     image_url: String
     body: String!
-    publication_time: DateTime
+    publication_time: String
     publication_status: PublicationStatus
-    created_at: DateTime
-    updated_at: DateTime
+    created_at: String
+    updated_at: String
   }
 
   type Author {
@@ -24,16 +26,18 @@ module.exports = `
     name: String!
     sort_name: String
     email: String
-    created_at: DateTime
-    updated_at: DateTime
+    articles: [Article]
+    created_at: String
+    updated_at: String
   }
 
   type Tag {
     id: ID!
     name: String!
     description: String
-    created_at: DateTime
-    updated_at: DateTime
+    articles: [Article]
+    created_at: String
+    updated_at: String
   }
 
   type Link {
@@ -41,17 +45,18 @@ module.exports = `
     name: String!
     description: String
     url: String!
-    category: ID!
-    created_at: DateTime
-    updated_at: DateTime
+    category: Category 
+    created_at: String
+    updated_at: String
   }
 
   type Category {
     id: ID!
     name: String!
     description: String
-    created_at: DateTime
-    updated_at: DateTime
+    links: [Link]
+    created_at: String
+    updated_at: String
   }
 
   type Page {
@@ -59,14 +64,13 @@ module.exports = `
     title: String!
     subtitle: String
     body: String
-    publication_time: DateTime
+    publication_time: String
     publication_status: PublicationStatus
-    created_at: DateTime
-    updated_at: DateTime
+    created_at: String
+    updated_at: String
   }
 
   type Query {
-    feed: [Article]
-    article(id: ID!): [Article]
+    feed(last: Int): [Article]
   }
 `

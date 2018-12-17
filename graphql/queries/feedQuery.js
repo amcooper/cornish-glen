@@ -1,7 +1,7 @@
 const Article = require("../../models/Article.js");
 
 const feed = () => {
-  return Article.paginate()
+  return Article.index()
     .then(data => {
       return data;
     })
