@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
-const { buildSchema } = require("graphql");
+const cors = require("cors");
 const morgan = require("morgan");
+const { buildSchema } = require("graphql");
 const graphqlHTTP = require("express-graphql");
-const knex = require("./config/database.js");
 
 const schema = buildSchema(require("./graphql/schema.js"));
 
@@ -11,6 +11,7 @@ const { feed } = require("./graphql/queries");
 
 const rootValue = { feed };
 
+app.use(cors());
 app.use(morgan("combined"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
