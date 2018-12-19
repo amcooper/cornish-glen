@@ -84,7 +84,7 @@ const seedArticles = () => {
       headline: chance.sentence(),
       subhed: chance.sentence(),
       excerpt: "Excerpt " + chance.sentence(),
-      image_url: "https://picsum.photos/200/?random",
+      image_url: `https://picsum.photos/200/200/?image=${Math.floor(Math.random() * 1000) + 1}`,
       body: body(),
       // publication_time: new Date(Date.now()),
       created_at: new Date(Date.now()),
