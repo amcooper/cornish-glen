@@ -1,3 +1,165 @@
+import {
+  GraphQLID,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+} from "graphql";
+
+import {
+  nodeDefinitions,
+  globalIdField,
+  fromGlobalId,
+  connectionFromArray,
+  connectionArgs,
+  connectionDefinitions,
+} from "graphql-relay";
+
+import {
+  getArticle,
+  getAuthor,
+  getTag,
+} from "../models/index.js";
+
+const { nodeInterface, nodeField } = nodeDefinitions(
+  globalId => {
+    const { type, id } = fromGlobalId(globalId);
+    if (type === "Article") {
+      return getArticle(id);
+    }
+    if (type === "Author") {
+      return getAuthor(id);
+    }
+    if (type === "Tag") {
+      return getTag(id);
+    }
+  },
+  obj => {
+    if (obj.authors) { return articleType }
+      else if (obj.name) { return authorType }
+      else { return tagType }
+  }
+);
+
+/*
+ * New Relay-compatible schema
+ * 
+
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED
+}
+
+interface Node {
+  id: ID!
+}
+
+type Article : Node {
+  id: ID!
+  headline: String
+  subhed: String
+  excerpt: String
+  body: String
+  image_url: String
+  publication_time: String
+  publication_status: PublicationStatus
+  created_at: String
+  updated_at: String
+  authors: ArticleAuthorConnection
+  tags: ArticleTagConnection
+  comments: ArticleCommentConnection
+}
+
+type Author : Node {
+  id: ID!
+  name: String
+  sort_name: String
+  email: String
+  created_at: String
+  updated_at: String
+  articles: AuthorArticleConnection
+  comments: AuthorCommentConnection
+}
+
+type Tag : Node {
+  id: ID!
+  name: String
+  description: String
+  created_at: String
+  updated_at: String
+  articles: TagArticleConnection
+}
+
+
+type Link : Node {
+  id: ID!
+  name: String
+  description: String
+  url: String
+  created_at: String
+  updated_at: String
+}
+
+type Category : Node {
+  id: ID!
+  name: String
+  description: String
+  created_at: String
+  updated_at: String
+  links: LinkConnection
+}
+
+type Page : Node {
+  id: ID!
+  title: String!
+  subtitle: String
+  body: String
+  publication_time: String
+  publication_status: PublicationStatus
+  created_at: String
+  updated_at: String
+}
+
+type Comment : Node {
+  id: ID!
+  body: String
+  publication_time: String
+  publication_status: PublicationStatus
+  created_at: String
+  updated_at: String
+}
+
+type ArticleAuthorConnection {
+  edges: [ArticleAuthorEdge]
+  pageInfo: PageInfo!
+}
+
+type ArticleAuthorEdge {
+  cursor: String!
+  node: Author
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Query {
+  articles: [Article]
+  comments(articleId: ID!): [Comment]
+  categories: [Category]
+  pages: [Page]
+  page(id: ID!): Page
+  node(id: ID!): Node
+}
+
+*/
+
+/*
+ * Old schema
+ * 
 module.exports = `
   # scalar DateTime
 
@@ -74,3 +236,4 @@ module.exports = `
     feed(last: Int): [Article]
   }
 `
+*/
