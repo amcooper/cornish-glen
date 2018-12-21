@@ -1,25 +1,25 @@
-import {
+const {
   GraphQLID,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
-} from "graphql";
+} = require("graphql");
 
-import {
+const {
   nodeDefinitions,
   globalIdField,
   fromGlobalId,
   connectionFromArray,
   connectionArgs,
   connectionDefinitions,
-} from "graphql-relay";
+} = require("graphql-relay");
 
-import {
+const {
   getArticle,
   getAuthor,
   getTag,
-} from "../models/index.js";
+} = require("../models/index.js");
 
 const { nodeInterface, nodeField } = nodeDefinitions(
   globalId => {
@@ -41,6 +41,8 @@ const { nodeInterface, nodeField } = nodeDefinitions(
   }
 );
 
+const { connectionType: authorConnection } =
+  connectionDefinitions({ nodeType: authorType });
 
 const articleType = new GraphQLObjectType({
   name: 'Article',
@@ -68,8 +70,7 @@ const articleType = new GraphQLObjectType({
       type: authorConnection,
       description: 'Article authors',
       args: connectionArgs,
-      // confirm this resolver- it looks off
-      resolve: (author, args) => connectionFromArray(author.articles.map(getAuthor), args)
+      resolve: (article, args) => connectionFromArray(article.authors.map(getAuthor), args)
     }
   })
 });
