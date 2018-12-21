@@ -5,9 +5,10 @@ const getArticle = id => knex("articles")
   .then(data => data[0])
   .catch(error => { console.error(error); });
 
-const getArticles = () => knex("articles")
-  .then(data => data)
-  .catch(error => { console.error(error); });
+const getArticles = () => { 
+  debugger; 
+  return knex("articles"); 
+}
 
 module.exports = { 
   getArticle, 
