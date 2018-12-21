@@ -97,16 +97,20 @@ const articleType = new GraphQLObjectType({
   }); }
 });
 
+const { connectionType: articleConnection } =
+  connectionDefinitions({ nodeType: articleType });
 
 const Query = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
     articles: {
-      type: articleType,
-      resolve: () => { 
+      type: articleConnection,
+      description: 'All the articles',
+      args: connectionArgs,
+      resolve: (undefined, args) => { 
         debugger; 
         return getArticles()
-          .then(data => data)
+          .then(data => { console.log(data[0]); return connectionFromArray(data, args); })
           .catch(error => { console.error(error); }); 
       },
     },

@@ -7,7 +7,9 @@ const getArticle = id => knex("articles")
 
 const getArticles = () => { 
   debugger; 
-  return knex("articles"); 
+  return knex("articles")
+    .then(data => { console.log(data[0]); return data;})
+    .catch(error => { console.error(error); }); 
 }
 
 module.exports = { 
