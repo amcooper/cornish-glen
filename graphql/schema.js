@@ -17,6 +17,7 @@ const {
 
 const {
   getArticle,
+  getArticles,
   getAuthor,
   getTag,
 } = require("../models/index.js");
@@ -75,6 +76,38 @@ const articleType = new GraphQLObjectType({
   })
 });
 
+
+const Query = new GraphQLObjectType({
+  name: 'Query',
+  fields: {
+    articles: {
+      type: articleType,
+      resolve: () => getArticles(),
+    },
+    node: nodeField,
+  },
+});
+
+/*
+const Mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    addTodo: GraphQLAddTodoMutation,
+    changeTodoStatus: GraphQLChangeTodoStatusMutation,
+    markAllTodos: GraphQLMarkAllTodosMutation,
+    removeCompletedTodos: GraphQLRemoveCompletedTodosMutation,
+    removeTodo: GraphQLRemoveTodoMutation,
+    renameTodo: GraphQLRenameTodoMutation,
+  },
+});
+*/
+
+export const schema = new GraphQLSchema({
+  query: Query,
+  // mutation: Mutation,
+});
+
+module.exports = schema;
 
 /*
  * Old schema

@@ -5,4 +5,11 @@ const getArticle = id => knex("articles")
   .then(data => data[0])
   .catch(error => { console.error(error); });
 
-module.exports = getArticle;
+const getArticles = () => knex("articles")
+  .then(data => data)
+  .catch(error => { console.error(error); });
+
+module.exports = { 
+  getArticle, 
+  getArticles
+};
