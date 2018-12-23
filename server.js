@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const { buildSchema } = require("graphql");
 const graphqlHTTP = require("express-graphql");
 
-const schema = buildSchema(require("./graphql/schema.js"));
+const schema = require("./graphql/schema.js");
 
 const { feed } = require("./graphql/queries");
 
@@ -19,7 +19,7 @@ app.use(express.urlencoded({extended: true}));
 app.options("/graphql", cors()); // CORS pre-flight
 app.use("/graphql", express.json(), graphqlHTTP({
   schema,
-  rootValue,
+  // rootValue,
   graphiql: true
 }));
 

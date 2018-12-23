@@ -42,16 +42,37 @@ const { nodeInterface, nodeField } = nodeDefinitions(
   }
 );
 
-/*
+const authorType = new GraphQLObjectType({
+  name: 'Author',
+  description: 'Author of an article',
+  interfaces: [ nodeInterface ],
+  fields: () => ({
+    id: globalIdField(),
+    name: {
+      type: GraphQLString,
+      description: 'Author\'s name',
+    },
+    sort_name: {
+      type: GraphQLString,
+      description: 'The string (usually surname) by which the author\'s name should be sorted',
+    },
+    email: {
+      type: GraphQLString,
+      description: 'Author\'s email address'
+    }
+  })
+});
+
 const { connectionType: authorConnection } =
   connectionDefinitions({ nodeType: authorType });
-*/
 
 const articleType = new GraphQLObjectType({
   name: 'Article',
   description: 'Article',
   interfaces: [ nodeInterface ],
-  fields: () => ({
+  fields: () => { 
+    debugger; 
+    return ({
     id: globalIdField(),
     headline: {
       type: GraphQLString,
@@ -77,22 +98,37 @@ const articleType = new GraphQLObjectType({
       resolve: (article, args) => connectionFromArray(article.authors.map(getAuthor), args)
     }
     */
-  })
+  });
+}
 });
 
 const { connectionType: articleConnection } = connectionDefinitions({ nodeType: articleType });
 
 const Query = new GraphQLObjectType({
   name: 'Query',
-  fields: {
+  fields: () => ({
     articles: {
       type: articleConnection,
-      resolve: (article, args, context, info) => getArticles()
-        .then(articles => articles)
-        .catch(error => { console.error(error); }),
+      description: 'All the articles',
+      args: connectionArgs,
+      resolve: (article, args) => { 
+        debugger; 
+        return getArticles()
+          .then(data => { console.log(data[0]); return connectionFromArray(data, args); })
+          .catch(error => { console.error(error); }); 
+      },
+    },
+    article: {
+      type: articleType,
+      resolve: () => {
+        debugger;
+        return getArticle(1)
+          .then(data => data)
+          .catch(error => { console.error(error); });
+      }
     },
     node: nodeField,
-  },
+  }),
 });
 
 /*
