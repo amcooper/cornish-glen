@@ -42,8 +42,10 @@ const { nodeInterface, nodeField } = nodeDefinitions(
   }
 );
 
+/*
 const { connectionType: authorConnection } =
   connectionDefinitions({ nodeType: authorType });
+*/
 
 const articleType = new GraphQLObjectType({
   name: 'Article',
@@ -57,32 +59,37 @@ const articleType = new GraphQLObjectType({
     },
     subhed: {
       type: GraphQLString,
-      description: 'Arricle subhed',
+      description: 'Article subhed',
     },
     excerpt: {
       type: GraphQLString,
-      description: 'Arricle excerpt for the promo',
+      description: 'Article excerpt for the promo',
     },
     body: {
       type: GraphQLString,
       description: 'Article body'
     },
+    /*
     authors: {
       type: authorConnection,
       description: 'Article authors',
       args: connectionArgs,
       resolve: (article, args) => connectionFromArray(article.authors.map(getAuthor), args)
     }
+    */
   })
 });
 
+const { connectionType: articleConnection } = connectionDefinitions({ nodeType: articleType });
 
 const Query = new GraphQLObjectType({
   name: 'Query',
   fields: {
     articles: {
-      type: articleType,
-      resolve: () => getArticles(),
+      type: articleConnection,
+      resolve: (article, args, context, info) => getArticles()
+        .then(articles => articles)
+        .catch(error => { console.error(error); }),
     },
     node: nodeField,
   },
@@ -102,7 +109,7 @@ const Mutation = new GraphQLObjectType({
 });
 */
 
-export const schema = new GraphQLSchema({
+const schema = new GraphQLSchema({
   query: Query,
   // mutation: Mutation,
 });
