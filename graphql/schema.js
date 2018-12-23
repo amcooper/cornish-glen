@@ -19,6 +19,7 @@ const {
   getArticle,
   getArticles,
   getAuthor,
+  getAuthorsByArticle,
   getTag,
 } = require("../models/index.js");
 
@@ -73,31 +74,34 @@ const articleType = new GraphQLObjectType({
   fields: () => { 
     debugger; 
     return ({
-    id: globalIdField(),
-    headline: {
-      type: GraphQLString,
-      description: 'Article headline',
-    },
-    subhed: {
-      type: GraphQLString,
-      description: 'Article subhed',
-    },
-    excerpt: {
-      type: GraphQLString,
-      description: 'Article excerpt for the promo',
-    },
-    body: {
-      type: GraphQLString,
-      description: 'Article body'
-    },
-    /*
-    authors: {
-      type: authorConnection,
-      description: 'Article authors',
-      args: connectionArgs,
-      resolve: (article, args) => connectionFromArray(article.authors.map(getAuthor), args)
-    }
-    */
+      id: globalIdField(),
+      headline: {
+        type: GraphQLString,
+        description: 'Article headline',
+      },
+      subhed: {
+        type: GraphQLString,
+        description: 'Article subhed',
+      },
+      excerpt: {
+        type: GraphQLString,
+        description: 'Article excerpt for the promo',
+      },
+      body: {
+        type: GraphQLString,
+        description: 'Article body'
+      },
+      authors: {
+        type: authorConnection,
+        description: 'Article authors',
+        args: connectionArgs,
+        // resolve: (article, args) => connectionFromArray(article.authors.map(getAuthor), args)
+        resolve: (article, args) => {
+          return getAuthorsByArticle(article.id)
+            .then(authors => connectionFromArray(authors, args))
+            .catch(error => { console.error(error); });
+        }
+      }
   });
 }
 });
@@ -120,10 +124,13 @@ const Query = new GraphQLObjectType({
     },
     article: {
       type: articleType,
-      resolve: () => {
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve: (article, args) => {
         debugger;
-        return getArticle(1)
-          .then(data => data)
+        return getArticle(args.id)
+          .then(data => data[0])
           .catch(error => { console.error(error); });
       }
     },
