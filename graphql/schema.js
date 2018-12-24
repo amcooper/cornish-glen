@@ -20,7 +20,7 @@ const {
   getArticles,
   getAuthor,
   getAuthorsByArticle,
-  getTag,
+  getTagsByArticle
 } = require("../models/index.js");
 
 const { nodeInterface, nodeField } = nodeDefinitions(
@@ -67,6 +67,25 @@ const authorType = new GraphQLObjectType({
 const { connectionType: authorConnection } =
   connectionDefinitions({ nodeType: authorType });
 
+const tagType = new GraphQLObjectType({
+  name: 'Tag',
+  description: 'Tag',
+  interfaces: [ nodeInterface ],
+  fields: () => ({
+    id: globalIdField(),
+    name: {
+      type: GraphQLString,
+      description: 'Tag name'
+    },
+    description: {
+      type: GraphQLString,
+      description: 'Tag description'
+    }
+  })
+});
+
+const { connectionType: tagConnection } = connectionDefinitions({ nodeType: tagType });
+
 const articleType = new GraphQLObjectType({
   name: 'Article',
   description: 'Article',
@@ -95,10 +114,19 @@ const articleType = new GraphQLObjectType({
         type: authorConnection,
         description: 'Article authors',
         args: connectionArgs,
-        // resolve: (article, args) => connectionFromArray(article.authors.map(getAuthor), args)
         resolve: (article, args) => {
           return getAuthorsByArticle(article.id)
             .then(authors => connectionFromArray(authors, args))
+            .catch(error => { console.error(error); });
+        }
+      },
+      tags: {
+        type: tagConnection,
+        description: 'Article tags',
+        args: connectionArgs,
+        resolve: (article, args) => {
+          return getTagsByArticle(article.id)
+            .then(tags => connectionFromArray(tags, args))
             .catch(error => { console.error(error); });
         }
       }
@@ -124,6 +152,7 @@ const Query = new GraphQLObjectType({
     },
     article: {
       type: articleType,
+      description: 'Single article',
       args: {
         id: { type: GraphQLID }
       },

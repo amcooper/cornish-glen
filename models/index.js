@@ -2,16 +2,18 @@ const {
   getArticle,
   getArticles
 } = require("./Article.js");
+
 const {
   getAuthor,
   getAuthorsByArticle
 } = require("./Author.js");
-const getTag = {};
+
+const getTagsByArticle = require("./Tag.js");
 
 module.exports = { 
   getArticle,
   getArticles,
   getAuthor,
   getAuthorsByArticle,
-  getTag
+  getTagsByArticle
 };
