@@ -4,6 +4,7 @@ const {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
+  GraphQLList,
 } = require("graphql");
 
 const {
@@ -111,12 +112,14 @@ const articleType = new GraphQLObjectType({
         description: 'Article body'
       },
       authors: {
-        type: authorConnection,
+        // type: authorConnection,
+        type: GraphQLList(authorType),
         description: 'Article authors',
         args: connectionArgs,
         resolve: (article, args) => {
           return getAuthorsByArticle(article.id)
-            .then(authors => connectionFromArray(authors, args))
+            // .then(authors => connectionFromArray(authors, args))
+            .then(authors => authors)
             .catch(error => { console.error(error); });
         }
       },
