@@ -112,14 +112,12 @@ const articleType = new GraphQLObjectType({
         description: 'Article body'
       },
       authors: {
-        // type: authorConnection,
-        type: GraphQLList(authorType),
+        type: authorConnection,
         description: 'Article authors',
         args: connectionArgs,
         resolve: (article, args) => {
           return getAuthorsByArticle(article.id)
-            // .then(authors => connectionFromArray(authors, args))
-            .then(authors => authors)
+            .then(authors => connectionFromArray(authors, args))
             .catch(error => { console.error(error); });
         }
       },
