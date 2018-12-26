@@ -92,7 +92,6 @@ const articleType = new GraphQLObjectType({
   description: 'Article',
   interfaces: [ nodeInterface ],
   fields: () => { 
-    debugger; 
     return ({
       id: globalIdField(),
       headline: {
@@ -110,6 +109,10 @@ const articleType = new GraphQLObjectType({
       body: {
         type: GraphQLString,
         description: 'Article body'
+      },
+      image_url: {
+        type: GraphQLString,
+        description: 'URL of article promo image'
       },
       authors: {
         type: authorConnection,
@@ -145,9 +148,8 @@ const Query = new GraphQLObjectType({
       description: 'All the articles',
       args: connectionArgs,
       resolve: (article, args) => { 
-        debugger; 
         return getArticles()
-          .then(data => { console.log(data[0]); return connectionFromArray(data, args); })
+          .then(data => { return connectionFromArray(data, args); })
           .catch(error => { console.error(error); }); 
       },
     },
@@ -158,7 +160,6 @@ const Query = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve: (article, args) => {
-        debugger;
         return getArticle(args.id)
           .then(data => data[0])
           .catch(error => { console.error(error); });
