@@ -2,11 +2,11 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
-const { buildSchema } = require("graphql");
+const { printSchema } = require("graphql");
 const graphqlHTTP = require("express-graphql");
 
 const schema = require("./graphql/schema.js");
-
+console.log(printSchema(schema));
 const { feed } = require("./graphql/queries");
 
 const rootValue = { feed };
