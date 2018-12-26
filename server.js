@@ -6,10 +6,7 @@ const { printSchema } = require("graphql");
 const graphqlHTTP = require("express-graphql");
 
 const schema = require("./graphql/schema.js");
-console.log(printSchema(schema));
-const { feed } = require("./graphql/queries");
-
-const rootValue = { feed };
+// console.log(printSchema(schema)); // Console log the schema!
 
 app.use(cors());
 app.use(morgan("combined"));

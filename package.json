@@ -8,7 +8,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "flush-data": "knex migrate:rollback && knex migrate:latest && knex seed:run"
+    "flush-data": "knex migrate:rollback && knex migrate:latest && knex seed:run",
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

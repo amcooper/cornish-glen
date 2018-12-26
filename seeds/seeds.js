@@ -98,7 +98,7 @@ const seedAuthorsArticles = () => {
   const result = [];
   let die;
   for (k = ARTICLE_QTY; k > 0; k--) {
-    die = Math.floor(Math.random() * AUTHORS_LIST.length) + 1;
+    die = Math.floor(Math.random() * AUTHORS_LIST.length);
     if (die === 0) {
       result.push({article_id: k, author_id: 1});
       result.push({article_id: k, author_id: 2});

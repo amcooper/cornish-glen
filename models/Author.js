@@ -1,8 +1,15 @@
 const knex = require("../config/database.js");
 
-const getAuthor = id => knex("authors")
-  .where("id", id)
-  .then(data => data[0])
-  .catch(error => { console.error(error); });
+const getAuthor = id => knex("authors").where("id", id)
 
-module.exports = getAuthor;
+// SELECT authors_articles.article_id, authors.name FROM authors_articles JOIN authors ON authors.id = authors_articles.author_id AND authors_articles.article_id = 2;
+const getAuthorsByArticle = articleId => knex
+  .from("authors")
+  .innerJoin("authors_articles", function() {
+    this.on("authors_articles.article_id", "=", articleId).andOn("authors.id", "=", "authors_articles.author_id")
+  });
+
+module.exports = {
+  getAuthor,
+  getAuthorsByArticle
+};
