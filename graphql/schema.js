@@ -4,7 +4,9 @@ const {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
+  GraphQLInt,
   GraphQLList,
+  GraphQLScalarType
 } = require("graphql");
 
 const {
@@ -113,6 +115,10 @@ const articleType = new GraphQLObjectType({
       image_url: {
         type: GraphQLString,
         description: 'URL of article promo image'
+      },
+      publication_time: {
+        type: GraphQLString,
+        description: 'Article publication timestamp'
       },
       authors: {
         type: authorConnection,

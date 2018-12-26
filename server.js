@@ -6,6 +6,7 @@ const { printSchema } = require("graphql");
 const graphqlHTTP = require("express-graphql");
 
 const schema = require("./graphql/schema.js");
+debugger;
 // console.log(printSchema(schema)); // Console log the schema!
 
 app.use(cors());

@@ -74,7 +74,7 @@ const seedArticles = () => {
       excerpt: "Excerpt " + chance.sentence(),
       image_url: `https://picsum.photos/200/200/?image=${Math.floor(Math.random() * 1000) + 1}`,
       body: body(),
-      // publication_time: new Date(Date.now()),
+      publication_time: chance.date({ year: 2018 }),
       created_at: new Date(Date.now()),
       updated_at: new Date(Date.now())
     });
