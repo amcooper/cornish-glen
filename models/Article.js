@@ -1,12 +1,10 @@
 const knex = require("../config/database.js");
 
-const ARTICLES_PER_PAGE = 10;
+const getArticle = id => knex("articles").where("id", id);
 
-const Article = {
-  index: () => {
-    return knex("articles").orderBy("publication_time", "desc");
-  },
-  lastTen: id => {}
-}
+const getArticles = () => knex("articles").orderBy("publication_time", "desc");
 
-module.exports = Article;
+module.exports = { 
+  getArticle, 
+  getArticles
+};

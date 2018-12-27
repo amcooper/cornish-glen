@@ -2,19 +2,7 @@ const chance = require("chance").Chance();
 const ARTICLE_SIZE_SPREAD = 4;
 const ARTICLE_SIZE_MIN = 4;
 const ARTICLE_QTY = 20;
-const AUTHORS_LIST = [{
-  name: "T. T. Olafua",
-  sort_name: "olafua",
-  email: "tt@olafua.com",
-  created_at: new Date(Date.now()),
-  updated_at: new Date(Date.now())
-}, {
-  name: "F. A. Renteria",
-  sort_name: "renteria",
-  email: "nachosplease@renteria.media",
-  created_at: new Date(Date.now()),
-  updated_at: new Date(Date.now())
-}];
+const AUTHORS_QTY = 7;
 
 const TAGS_LIST = [{
   name: "webdev",
@@ -81,12 +69,12 @@ const seedArticles = () => {
   const articles = [];
   for (let i = ARTICLE_QTY; i > 0; i--) {
     articles.push({
-      headline: chance.sentence(),
-      subhed: chance.sentence(),
+      headline: chance.sentence({ words: 5 }).slice(0, -1),
+      subhed: chance.sentence({ words: 8 }).slice(0, -1),
       excerpt: "Excerpt " + chance.sentence(),
       image_url: `https://picsum.photos/200/200/?image=${Math.floor(Math.random() * 1000) + 1}`,
       body: body(),
-      // publication_time: new Date(Date.now()),
+      publication_time: chance.date({ year: 2018 }),
       created_at: new Date(Date.now()),
       updated_at: new Date(Date.now())
     });
@@ -94,16 +82,34 @@ const seedArticles = () => {
   return articles;
 }
 
+const seedAuthors = () => {
+  const authors = [];
+  for (let i = AUTHORS_QTY; i > 0; i--) {
+    const firstName = chance.first();
+    const surname = chance.last();
+    authors.push({
+      name: `${firstName} ${surname}`,
+      sort_name: surname,
+      email: `${firstName.toLowerCase()}.${surname.toLowerCase()}@hotmail.com`,
+      created_at: new Date(Date.now()),
+      updated_at: new Date(Date.now())
+    });
+  }
+  return authors;
+}
+
 const seedAuthorsArticles = () => {
   const result = [];
   let die;
   for (k = ARTICLE_QTY; k > 0; k--) {
-    die = Math.floor(Math.random() * AUTHORS_LIST.length) + 1;
-    if (die === 0) {
-      result.push({article_id: k, author_id: 1});
-      result.push({article_id: k, author_id: 2});
+    const firstCoauthor = Math.floor(Math.random() * AUTHORS_QTY) + 1;
+    if (Math.random() < 0.333) {
+      const m = Math.floor(Math.random() * AUTHORS_QTY) + 1;
+      const secondCoauthor = m === firstCoauthor ? (m + 1) % AUTHORS_QTY : m;
+      result.push({article_id: k, author_id: firstCoauthor});
+      result.push({article_id: k, author_id: secondCoauthor});
     } else {
-      result.push({article_id: k, author_id: die});
+      result.push({article_id: k, author_id: firstCoauthor});
     }
   }
   return result;
@@ -152,7 +158,7 @@ exports.seed = function(knex, Promise) {
     // Inserts seed entries
     return Promise.all([
       knex('articles').insert(seedArticles()),
-      knex("authors").insert(AUTHORS_LIST),
+      knex("authors").insert(seedAuthors()),
       knex("tags").insert(TAGS_LIST),
       knex("categories").insert(CATEGORIES_LIST),
       knex("pages").insert(seedPages())
