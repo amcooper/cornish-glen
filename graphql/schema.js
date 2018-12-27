@@ -6,7 +6,8 @@ const {
   GraphQLString,
   GraphQLInt,
   GraphQLList,
-  GraphQLScalarType
+  GraphQLScalarType,
+  GraphQLEnumType
 } = require("graphql");
 
 const {
@@ -45,6 +46,15 @@ const { nodeInterface, nodeField } = nodeDefinitions(
       else { return tagType }
   }
 );
+
+const PublicationStatusType = new GraphQLEnumType({
+  name: "PublicationStatus",
+  description: "Publication status",
+  values: {
+    DRAFT: { value: "draft" },
+    PUBLISHED: { value: "published" }
+  }
+});
 
 const authorType = new GraphQLObjectType({
   name: 'Author',
@@ -119,6 +129,10 @@ const articleType = new GraphQLObjectType({
       publication_time: {
         type: GraphQLString,
         description: 'Article publication timestamp'
+      },
+      publication_status: {
+        type: PublicationStatusType,
+        description: 'Article publication status'
       },
       authors: {
         type: authorConnection,
