@@ -25,6 +25,7 @@
   "devDependencies": {
     "chance": "^1.0.18",
     "husky": "^1.2.0",
-    "nodemon": "^1.18.8"
+    "nodemon": "^1.18.8",
+    "sqlite3": "^4.0.4"
   }
 }
