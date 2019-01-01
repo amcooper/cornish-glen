@@ -2,12 +2,9 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
-const { printSchema } = require("graphql");
 const graphqlHTTP = require("express-graphql");
 
 const schema = require("./graphql/schema.js");
-debugger;
-// console.log(printSchema(schema)); // Console log the schema!
 
 app.use(cors());
 app.use(morgan("combined"));
@@ -17,7 +14,6 @@ app.use(express.urlencoded({extended: true}));
 app.options("/graphql", cors()); // CORS pre-flight
 app.use("/graphql", express.json(), graphqlHTTP({
   schema,
-  // rootValue,
   graphiql: true
 }));
 
