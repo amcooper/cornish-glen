@@ -67,14 +67,16 @@ const body = () => {
 
 const seedArticles = () => {
   const articles = [];
+  const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
   for (let i = ARTICLE_QTY; i > 0; i--) {
+    let r = Math.floor(Math.random() * ONE_YEAR/ARTICLE_QTY);
     articles.push({
       headline: chance.sentence({ words: 5 }).slice(0, -1),
       subhed: chance.sentence({ words: 8 }).slice(0, -1),
       excerpt: "Excerpt " + chance.sentence(),
       image_url: `https://picsum.photos/200/200/?image=${Math.floor(Math.random() * 1000) + 1}`,
       body: body(),
-      publication_time: chance.date({ year: 2018 }),
+      publication_time: new Date(Date.now() - i * (ONE_YEAR/ARTICLE_QTY) + r),
       publication_status: (Math.random() < 0.3) ? "draft" : "published",
       created_at: new Date(Date.now()),
       updated_at: new Date(Date.now())
