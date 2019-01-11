@@ -18,9 +18,9 @@ exports.up = function(knex, Promise) {
       }
     }),
 
-    knex.schema.hasTable("authors").then( exists => {
+    knex.schema.hasTable("users").then( exists => {
       if (!exists) {
-        return knex.schema.createTable("authors", table => {
+        return knex.schema.createTable("users", table => {
           table.increments();
           table.string("name");
           table.string("sort_name");
@@ -47,7 +47,7 @@ exports.up = function(knex, Promise) {
           table.increments();
           table.integer("author_id").unsigned().notNullable();
           table.integer("article_id").unsigned().notNullable();
-          table.foreign("author_id").references("id").inTable("authors");
+          table.foreign("author_id").references("id").inTable("users");
           table.foreign("article_id").references("id").inTable("articles");
         })
       }
