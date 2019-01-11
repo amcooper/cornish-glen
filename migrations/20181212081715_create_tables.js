@@ -65,6 +65,18 @@ exports.up = function(knex, Promise) {
       }
     }),
 
+    knex.schema.hasTable("comments").then( exists => {
+      if (!exists) {
+        return knex.schema.createTable("comments", table => {
+          table.increments();
+          table.text("body");
+          table.string("publication_time");
+          table.integer("article_id").unsigned().notNullable();
+          table.integer("author_id").unsigned().notNullable();
+        })
+      }
+    })
+
     knex.schema.hasTable("links").then( exists => {
       if (!exists) {
         return knex.schema.createTable("links", table => {
