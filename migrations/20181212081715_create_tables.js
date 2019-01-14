@@ -71,11 +71,15 @@ exports.up = function(knex, Promise) {
           table.increments();
           table.text("body");
           table.string("publication_time");
+          table.integer("parent_comment_id");
           table.integer("article_id").unsigned().notNullable();
           table.integer("author_id").unsigned().notNullable();
+          table.foreign("article_id").references("id").inTable("articles");
+          table.foreign("author_id").references("id").inTable("users");
+          table.timestamps();
         })
       }
-    })
+    }),
 
     knex.schema.hasTable("links").then( exists => {
       if (!exists) {
@@ -121,10 +125,11 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
   return Promise.all([
+    knex.schema.dropTableIfExists("comments"),
     knex.schema.dropTableIfExists("authors_articles"),
     knex.schema.dropTableIfExists("articles_tags"),
     knex.schema.dropTableIfExists("articles"),
-    knex.schema.dropTableIfExists("authors"),
+    knex.schema.dropTableIfExists("users"),
     knex.schema.dropTableIfExists("tags"),
     knex.schema.dropTableIfExists("links"),
     knex.schema.dropTableIfExists("categories"),

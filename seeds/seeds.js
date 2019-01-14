@@ -2,6 +2,7 @@ const chance = require("chance").Chance();
 const ARTICLE_SIZE_SPREAD = 4;
 const ARTICLE_SIZE_MIN = 4;
 const ARTICLE_QTY = 20;
+const USERS_QTY = 100;
 const AUTHORS_QTY = 7;
 
 const TAGS_LIST = [{
@@ -89,12 +90,12 @@ const seedArticles = () => {
   return articles;
 }
 
-const seedAuthors = () => {
-  const authors = [];
-  for (let i = AUTHORS_QTY; i > 0; i--) {
+const seedUsers = () => {
+  const users = [];
+  for (let i = USERS_QTY; i > 0; i--) {
     const firstName = chance.first();
     const surname = chance.last();
-    authors.push({
+    users.push({
       name: `${firstName} ${surname}`,
       sort_name: surname,
       email: `${firstName.toLowerCase()}.${surname.toLowerCase()}@hotmail.com`,
@@ -102,7 +103,7 @@ const seedAuthors = () => {
       updated_at: new Date(Date.now())
     });
   }
-  return authors;
+  return users;
 }
 
 const seedAuthorsArticles = () => {
@@ -110,14 +111,12 @@ const seedAuthorsArticles = () => {
   let die;
   for (k = ARTICLE_QTY; k > 0; k--) {
     const firstCoauthor = Math.floor(Math.random() * AUTHORS_QTY) + 1;
+    result.push({article_id: k, author_id: firstCoauthor});
     if (Math.random() < 0.333) {
       const m = Math.floor(Math.random() * AUTHORS_QTY) + 1;
       const secondCoauthor = m === firstCoauthor ? (m + 1) % AUTHORS_QTY : m;
-      result.push({article_id: k, author_id: firstCoauthor});
       result.push({article_id: k, author_id: secondCoauthor});
-    } else {
-      result.push({article_id: k, author_id: firstCoauthor});
-    }
+    } 
   }
   return result;
 }
@@ -149,6 +148,11 @@ const seedPages = () => {
   return result;
 }
 
+const seedComments = () => {
+  const result = [];
+  return result;
+}
+
 exports.seed = function(knex, Promise) {
   // Deletes ALL existing entries
   return Promise.all([
@@ -156,7 +160,7 @@ exports.seed = function(knex, Promise) {
     knex("articles_tags").del(),
     knex("articles").del(),
     knex("tags").del(),
-    knex("authors").del(),
+    knex("users").del(),
     knex("links").del(),
     knex("categories").del(),
     knex("pages").del()
@@ -165,7 +169,7 @@ exports.seed = function(knex, Promise) {
     // Inserts seed entries
     return Promise.all([
       knex('articles').insert(seedArticles()),
-      knex("authors").insert(seedAuthors()),
+      knex("users").insert(seedUsers()),
       knex("tags").insert(TAGS_LIST),
       knex("categories").insert(CATEGORIES_LIST),
       knex("pages").insert(seedPages())
@@ -174,7 +178,8 @@ exports.seed = function(knex, Promise) {
       return Promise.all([
         knex("authors_articles").insert(seedAuthorsArticles()),
         knex("articles_tags").insert(seedArticlesTags()),
-        knex("links").insert(LINKS_LIST)
+        knex("links").insert(LINKS_LIST),
+        knex("comments").insert(seedComments())
       ]);
     });
   });
