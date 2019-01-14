@@ -148,9 +148,17 @@ const seedPages = () => {
   return result;
 }
 
-const seedComments = () => {
+const seedComments = (articles) => {
   const result = [];
-  return result;
+  for (let i = articles.length; i > 0; i--) {
+    for (let j = 3; j > 0; j--) {
+      result.push({
+        title: chance.sentence(),
+        body: chance.oaragraph(),
+        responded_comment_id
+      }
+    }
+  }
 }
 
 exports.seed = function(knex, Promise) {
@@ -168,7 +176,11 @@ exports.seed = function(knex, Promise) {
   .then(function () {
     // Inserts seed entries
     return Promise.all([
-      knex('articles').insert(seedArticles()),
+      knex('articles')
+        .insert(seedArticles())
+        .then(articles => 
+      knex("comments")
+          .insert(seedComments(articles.filter(article => article.publication_status === "published")))),
       knex("users").insert(seedUsers()),
       knex("tags").insert(TAGS_LIST),
       knex("categories").insert(CATEGORIES_LIST),
