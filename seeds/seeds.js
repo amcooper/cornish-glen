@@ -155,7 +155,8 @@ const seedComments = (articles) => {
       result.push({
         title: chance.sentence(),
         body: chance.oaragraph(),
-        responded_comment_id
+        responded_comment_id,
+        publication_time: articles[i].publication_time
       }
     }
   }
