@@ -20,7 +20,8 @@ const {
   getArticles,
   getAuthor,
   getAuthorsByArticle,
-  getTagsByArticle
+  getTagsByArticle,
+  getCommentsByArticle
 } = require("../models/index.js");
 
 const { nodeInterface, nodeField } = nodeDefinitions(
@@ -147,6 +148,16 @@ const articleType = new GraphQLObjectType({
         resolve: (article, args) => {
           return getTagsByArticle(article.id)
             .then(tags => connectionFromArray(tags, args))
+            .catch(error => { console.error(error); });
+        }
+      },
+      comments: {
+        type: commentConnection,
+        description: 'Article comments',
+        args: connectionArgs,
+        resolve: (article, args) => {
+          return getCommentsByArticle(article.id) 
+            .then(comments => connectionFromArray(comments, args))
             .catch(error => { console.error(error); });
         }
       }
