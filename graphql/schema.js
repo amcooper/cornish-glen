@@ -36,10 +36,14 @@ const { nodeInterface, nodeField } = nodeDefinitions(
     if (type === "Tag") {
       return getTag(id);
     }
+    if (type === "Comment") {
+      return getComment(id);
+    }
   },
   obj => {
     if (obj.authors) { return articleType }
       else if (obj.name) { return authorType }
+      else if (obj.parent_comment_id) { return commentType }
       else { return tagType }
   }
 );
@@ -76,6 +80,29 @@ const authorType = new GraphQLObjectType({
 
 const { connectionType: authorConnection } =
   connectionDefinitions({ nodeType: authorType });
+
+const commentType = new GraphQLObjectType({
+  name: 'Comment',
+  description: 'Comment',
+  interfaces: [ nodeInterface ],
+  fields: () => ({
+    id: globalIdField(), /* bppaa */
+    body: {
+      type: GraphQLString,
+      description: 'Comment body'
+    },
+    parent_comment_id: {
+      type: GraphQLID,
+      description: 'ID of comment being responded to'
+    },
+    publication_time: {
+      type: GraphQLString,
+      description: 'Comment publication time'
+    }
+  })
+});
+
+const { connectionType: commentConnection } = connectionDefinitions({ nodeType: commentType })
 
 const tagType = new GraphQLObjectType({
   name: 'Tag',
