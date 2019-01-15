@@ -86,7 +86,7 @@ const commentType = new GraphQLObjectType({
   description: 'Comment',
   interfaces: [ nodeInterface ],
   fields: () => ({
-    id: globalIdField(), /* bppaa */
+    id: globalIdField(), 
     body: {
       type: GraphQLString,
       description: 'Comment body'
@@ -98,6 +98,16 @@ const commentType = new GraphQLObjectType({
     publication_time: {
       type: GraphQLString,
       description: 'Comment publication time'
+    },
+    author: {
+      type: authorType,
+      description: 'Commenter',
+      args: {
+        author_id: GraphQLID
+      },
+      resolve: (author, args) => {
+        return getAuthor(args.author_id).then(author => author).catch(error => { console.error(error); });
+      }
     }
   })
 });
