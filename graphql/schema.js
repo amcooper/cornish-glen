@@ -103,7 +103,7 @@ const commentType = new GraphQLObjectType({
       type: authorType,
       description: 'Commenter',
       args: {
-        id: GraphQLID
+        id: globalIdField()
       },
       resolve: (comment, args) => {
         return getAuthor(args.id)
