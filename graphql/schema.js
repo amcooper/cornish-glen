@@ -273,7 +273,7 @@ const commentMutation = mutationWithClientMutationId({
     }
   },
   mutateAndGetPayload: ({ body, parentCommentId, articleId, authorId }) => {
-    const newComment = addComment({ body, parentCommentId, articleId, authorId })
+    return addComment({ body, parentCommentId, articleId, authorId })
       .then(data => { 
         console.log(data[0]);
         return ({ commentId: data[0] });
