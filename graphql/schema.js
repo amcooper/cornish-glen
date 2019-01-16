@@ -3,7 +3,8 @@ const {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
-  GraphQLEnumType
+  GraphQLEnumType,
+  GraphQLNonNull
 } = require("graphql");
 
 const {
@@ -13,6 +14,7 @@ const {
   connectionFromArray,
   connectionArgs,
   connectionDefinitions,
+  mutationWithClientMutationId
 } = require("graphql-relay");
 
 const {
@@ -21,7 +23,9 @@ const {
   getAuthor,
   getAuthorsByArticle,
   getTagsByArticle,
-  getCommentsByArticle
+  getCommentsByArticle,
+  getComment,
+  addComment
 } = require("../models/index.js");
 
 const { nodeInterface, nodeField } = nodeDefinitions(
@@ -246,9 +250,48 @@ const Mutation = new GraphQLObjectType({
 });
 */
 
+const commentMutation = mutationWithClientMutationId({
+  name: "NewComment",
+  inputFields: {
+    body: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    parentCommentId: {
+      type: GraphQLID
+    },
+    articleId: {
+      type: GraphQLNonNull(GraphQLID)
+    },
+    authorId: {
+      type: GraphQLID
+    }
+  },
+  outputFields: {
+    comment: {
+      type: commentType,
+      resolve: payload => { getComment(payload.commentId).then(data => data[0]) }
+    }
+  },
+  mutateAndGetPayload: ({ body, parentCommentId, articleId, authorId }) => {
+    const newComment = addComment({ body, parentCommentId, articleId, authorId })
+      .then(data => { 
+        console.log(data[0]);
+        return ({ commentId: data[0] });
+      })
+      .catch(error => { console.error(error); });
+  }
+});
+
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: () => ({
+    addComment: commentMutation
+  })
+});
+
 const schema = new GraphQLSchema({
   query: Query,
-  // mutation: Mutation,
+  mutation: Mutation,
 });
 
 module.exports = schema;
