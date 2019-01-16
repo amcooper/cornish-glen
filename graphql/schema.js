@@ -102,35 +102,14 @@ const commentType = new GraphQLObjectType({
     author: {
       type: authorType,
       description: 'Commenter',
-      args: {
-        id: globalIdField()
-      },
       resolve: (comment, args) => {
-        return getAuthor(args.id)
-          .then(author => author)
+        return getAuthor(comment.author_id)
+          .then(author => author[0])
           .catch(error => { console.error(error); });
       }
     }
   })
 });
-
-/*
-var queryType = new graphql.GraphQLObjectType({
-  name: 'Query',
-  fields: {
-    user: {
-      type: userType,
-      // `args` describes the arguments that the `user` query accepts
-      args: {
-        id: { type: graphql.GraphQLString }
-      },
-      resolve: function (_, {id}) {
-        return fakeDatabase[id];
-      }
-    }
-  }
-});
-*/
 
 const { connectionType: commentConnection } = connectionDefinitions({ nodeType: commentType })
 
