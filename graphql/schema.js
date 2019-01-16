@@ -254,13 +254,13 @@ const commentMutation = mutationWithClientMutationId({
   name: "NewComment",
   inputFields: {
     body: {
-      type: GraphQLNonNull(GraphQLString)
+      type: new GraphQLNonNull(GraphQLString)
     },
     parentCommentId: {
       type: GraphQLID
     },
     articleId: {
-      type: GraphQLNonNull(GraphQLID)
+      type: new GraphQLNonNull(GraphQLID)
     },
     authorId: {
       type: GraphQLID
@@ -269,7 +269,7 @@ const commentMutation = mutationWithClientMutationId({
   outputFields: {
     comment: {
       type: commentType,
-      resolve: payload => { getComment(payload.commentId).then(data => data[0]) }
+      resolve: payload => { getComment(payload.commentId).then(data => data[0]).catch(error => { console.error(error); }) }
     }
   },
   mutateAndGetPayload: ({ body, parentCommentId, articleId, authorId }) => {
