@@ -13,7 +13,7 @@ app.use(express.urlencoded({extended: true}));
 
 // Middleware: if it's a mutation, authenticate.
 app.use((request, response, next) => {
-  console.log(request.body.query ? "query" : "mutation");
+  console.log("[DEBUG][request.body]", request.body, "\n");
   next();
 });
 

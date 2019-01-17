@@ -228,7 +228,10 @@ const Query = new GraphQLObjectType({
       },
       resolve: (article, args) => {
         return getArticle(args.id)
-          .then(data => data[0])
+          .then(data => { 
+            debugger;
+            return data[0];
+          })
           .catch(error => { console.error(error); });
       }
     },
@@ -269,13 +272,22 @@ const commentMutation = mutationWithClientMutationId({
   outputFields: {
     comment: {
       type: commentType,
-      resolve: payload => { getComment(payload.commentId).then(data => data[0]).catch(error => { console.error(error); }) }
+      resolve: payload => { 
+        debugger; 
+        return getComment(payload.commentId)
+          .then(data => {
+            debugger;
+            return data[0];
+          })
+          .catch(error => { console.error(error); }); 
+      }
     }
   },
   mutateAndGetPayload: ({ body, parentCommentId, articleId, authorId }) => {
     return addComment({ body, parentCommentId, articleId, authorId })
       .then(data => { 
-        console.log(data[0]);
+        console.log("[DEBUG][commentMutation][payload] ", data[0], "\n");
+        debugger;
         return ({ commentId: data[0] });
       })
       .catch(error => { console.error(error); });

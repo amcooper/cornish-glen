@@ -1,6 +1,9 @@
 const knex = require("../config/database.js");
 
-const getComment = id => knex("comments").where("id", id)
+const getComment = id => {
+  debugger;
+  return knex("comments").where("id", id);
+}
 
 // SELECT comments.id, comments.article_id, comments.author_id, users.name FROM comments INNER JOIN users ON comments.author_id = users.id AND comments.article_id = 1;
 const getCommentsByArticle = articleId => knex
