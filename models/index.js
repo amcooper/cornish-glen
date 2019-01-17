@@ -10,10 +10,19 @@ const {
 
 const getTagsByArticle = require("./Tag.js");
 
+const {
+  getCommentsByArticle,
+  addComment,
+  getComment
+} = require("./Comment.js");
+
 module.exports = { 
   getArticle,
   getArticles,
   getAuthor,
   getAuthorsByArticle,
-  getTagsByArticle
+  getTagsByArticle,
+  getCommentsByArticle,
+  addComment,
+  getComment
 };

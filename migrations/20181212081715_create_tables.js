@@ -18,9 +18,9 @@ exports.up = function(knex, Promise) {
       }
     }),
 
-    knex.schema.hasTable("authors").then( exists => {
+    knex.schema.hasTable("users").then( exists => {
       if (!exists) {
-        return knex.schema.createTable("authors", table => {
+        return knex.schema.createTable("users", table => {
           table.increments();
           table.string("name");
           table.string("sort_name");
@@ -47,7 +47,7 @@ exports.up = function(knex, Promise) {
           table.increments();
           table.integer("author_id").unsigned().notNullable();
           table.integer("article_id").unsigned().notNullable();
-          table.foreign("author_id").references("id").inTable("authors");
+          table.foreign("author_id").references("id").inTable("users");
           table.foreign("article_id").references("id").inTable("articles");
         })
       }
@@ -61,6 +61,22 @@ exports.up = function(knex, Promise) {
           table.integer("article_id").unsigned().notNullable();
           table.foreign("tag_id").references("id").inTable("tags");
           table.foreign("article_id").references("id").inTable("articles");
+        })
+      }
+    }),
+
+    knex.schema.hasTable("comments").then( exists => {
+      if (!exists) {
+        return knex.schema.createTable("comments", table => {
+          table.increments();
+          table.text("body");
+          table.string("publication_time");
+          table.integer("parent_comment_id");
+          table.integer("article_id").unsigned().notNullable();
+          table.integer("author_id").unsigned().notNullable();
+          table.foreign("article_id").references("id").inTable("articles");
+          table.foreign("author_id").references("id").inTable("users");
+          table.timestamps();
         })
       }
     }),
@@ -109,10 +125,11 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
   return Promise.all([
+    knex.schema.dropTableIfExists("comments"),
     knex.schema.dropTableIfExists("authors_articles"),
     knex.schema.dropTableIfExists("articles_tags"),
     knex.schema.dropTableIfExists("articles"),
-    knex.schema.dropTableIfExists("authors"),
+    knex.schema.dropTableIfExists("users"),
     knex.schema.dropTableIfExists("tags"),
     knex.schema.dropTableIfExists("links"),
     knex.schema.dropTableIfExists("categories"),

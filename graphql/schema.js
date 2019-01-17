@@ -3,7 +3,8 @@ const {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
-  GraphQLEnumType
+  GraphQLEnumType,
+  GraphQLNonNull
 } = require("graphql");
 
 const {
@@ -13,6 +14,7 @@ const {
   connectionFromArray,
   connectionArgs,
   connectionDefinitions,
+  mutationWithClientMutationId
 } = require("graphql-relay");
 
 const {
@@ -20,7 +22,10 @@ const {
   getArticles,
   getAuthor,
   getAuthorsByArticle,
-  getTagsByArticle
+  getTagsByArticle,
+  getCommentsByArticle,
+  getComment,
+  addComment
 } = require("../models/index.js");
 
 const { nodeInterface, nodeField } = nodeDefinitions(
@@ -35,10 +40,14 @@ const { nodeInterface, nodeField } = nodeDefinitions(
     if (type === "Tag") {
       return getTag(id);
     }
+    if (type === "Comment") {
+      return getComment(id);
+    }
   },
   obj => {
     if (obj.authors) { return articleType }
       else if (obj.name) { return authorType }
+      else if (obj.parent_comment_id) { return commentType }
       else { return tagType }
   }
 );
@@ -75,6 +84,38 @@ const authorType = new GraphQLObjectType({
 
 const { connectionType: authorConnection } =
   connectionDefinitions({ nodeType: authorType });
+
+const commentType = new GraphQLObjectType({
+  name: 'Comment',
+  description: 'Comment',
+  interfaces: [ nodeInterface ],
+  fields: () => ({
+    id: globalIdField(), 
+    body: {
+      type: GraphQLString,
+      description: 'Comment body'
+    },
+    parent_comment_id: {
+      type: GraphQLID,
+      description: 'ID of comment being responded to'
+    },
+    publication_time: {
+      type: GraphQLString,
+      description: 'Comment publication time'
+    },
+    author: {
+      type: authorType,
+      description: 'Commenter',
+      resolve: (comment, args) => {
+        return getAuthor(comment.author_id)
+          .then(author => author[0])
+          .catch(error => { console.error(error); });
+      }
+    }
+  })
+});
+
+const { connectionType: commentConnection } = connectionDefinitions({ nodeType: commentType })
 
 const tagType = new GraphQLObjectType({
   name: 'Tag',
@@ -136,7 +177,16 @@ const articleType = new GraphQLObjectType({
         args: connectionArgs,
         resolve: (article, args) => {
           return getAuthorsByArticle(article.id)
-            .then(authors => connectionFromArray(authors, args))
+            .then(data => {
+              // There is probably a cleaner way to do this, preferably by getting cleaner data from db above.
+              const authors = data.map(obj => {
+                let newObj = Object.assign(obj, {id: obj.author_id});
+                delete newObj.author_id;
+                delete newObj.article_id;
+                return newObj;
+              });
+              return connectionFromArray(authors, args);
+            })
             .catch(error => { console.error(error); });
         }
       },
@@ -145,8 +195,29 @@ const articleType = new GraphQLObjectType({
         description: 'Article tags',
         args: connectionArgs,
         resolve: (article, args) => {
+          // You'll need to check and prob repair the tags array
           return getTagsByArticle(article.id)
-            .then(tags => connectionFromArray(tags, args))
+            .then(data => {
+              const tags = data.map(obj => {
+                let newObj = Object.assign(obj, {id: obj.tag_id});
+                delete newObj.tag_id;
+                delete newObj.article_id;
+                return newObj;
+              });
+              return connectionFromArray(tags, args);
+            })
+            .catch(error => { console.error(error); });
+        }
+      },
+      comments: {
+        type: commentConnection,
+        description: 'Article comments',
+        args: connectionArgs,
+        resolve: (article, args) => {
+          return getCommentsByArticle(article.id) 
+            .then(comments => {
+              return connectionFromArray(comments, args);
+            })
             .catch(error => { console.error(error); });
         }
       }
@@ -177,7 +248,9 @@ const Query = new GraphQLObjectType({
       },
       resolve: (article, args) => {
         return getArticle(args.id)
-          .then(data => data[0])
+          .then(data => {             
+            return data[0];
+          })
           .catch(error => { console.error(error); });
       }
     },
@@ -199,9 +272,54 @@ const Mutation = new GraphQLObjectType({
 });
 */
 
+const commentMutation = mutationWithClientMutationId({
+  name: "NewComment",
+  inputFields: {
+    body: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    parentCommentId: {
+      type: GraphQLID
+    },
+    articleId: {
+      type: new GraphQLNonNull(GraphQLID)
+    },
+    authorId: {
+      type: GraphQLID
+    }
+  },
+  outputFields: {
+    comment: {
+      type: commentType,
+      resolve: payload => {          
+        return getComment(payload.commentId)
+          .then(data => {            
+            return data[0];
+          })
+          .catch(error => { console.error(error); }); 
+      }
+    }
+  },
+  mutateAndGetPayload: ({ body, parentCommentId, articleId, authorId }) => {
+    return addComment({ body, parentCommentId, articleId, authorId })
+      .then(data => { 
+        console.log("[DEBUG][commentMutation][payload] ", data[0], "\n");        
+        return ({ commentId: data[0] });
+      })
+      .catch(error => { console.error(error); });
+  }
+});
+
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: () => ({
+    addComment: commentMutation
+  })
+});
+
 const schema = new GraphQLSchema({
   query: Query,
-  // mutation: Mutation,
+  mutation: Mutation,
 });
 
 module.exports = schema;

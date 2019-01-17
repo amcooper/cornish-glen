@@ -2,6 +2,7 @@ const chance = require("chance").Chance();
 const ARTICLE_SIZE_SPREAD = 4;
 const ARTICLE_SIZE_MIN = 4;
 const ARTICLE_QTY = 20;
+const USERS_QTY = 100;
 const AUTHORS_QTY = 7;
 
 const TAGS_LIST = [{
@@ -59,7 +60,7 @@ const CATEGORIES_LIST = [{
 
 const body = () => {
   let result = "";
-  for (let j = (ARTICLE_SIZE_MIN + Math.floor(Math.random() * ARTICLE_SIZE_SPREAD)); j > 0; j--) {
+  for (let j = chance.integer({ min: ARTICLE_SIZE_MIN, max: ARTICLE_SIZE_MIN + ARTICLE_SIZE_SPREAD}); j > 0; j--) {
     result = result + chance.paragraph() + (j === 1 ? "" : "\n");
   }
   return result;
@@ -69,7 +70,7 @@ const seedArticles = () => {
   const articles = [];
   const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
   for (let i = ARTICLE_QTY; i > 0; i--) {
-    let r = Math.floor(Math.random() * ONE_YEAR/ARTICLE_QTY);
+    let r = chance.integer({ min: 1, max: ONE_YEAR/ARTICLE_QTY });
     let publication_status = (Math.random() < 0.2) ? "draft" : "published";
     let publication_time = (publication_status === "published") 
       ? new Date(Date.now() - i * (ONE_YEAR/ARTICLE_QTY) + r)
@@ -78,7 +79,7 @@ const seedArticles = () => {
       headline: chance.sentence({ words: 5 }).slice(0, -1),
       subhed: chance.sentence({ words: 8 }).slice(0, -1),
       excerpt: "Excerpt " + chance.sentence(),
-      image_url: `https://picsum.photos/200/200/?image=${Math.floor(Math.random() * 1000) + 1}`,
+      image_url: `https://picsum.photos/200/200/?image=${chance.integer({ min: 1, max: 1000 })}`,
       body: body(),
       publication_time,
       publication_status,
@@ -89,12 +90,12 @@ const seedArticles = () => {
   return articles;
 }
 
-const seedAuthors = () => {
-  const authors = [];
-  for (let i = AUTHORS_QTY; i > 0; i--) {
+const seedUsers = () => {
+  const users = [];
+  for (let i = USERS_QTY; i > 0; i--) {
     const firstName = chance.first();
     const surname = chance.last();
-    authors.push({
+    users.push({
       name: `${firstName} ${surname}`,
       sort_name: surname,
       email: `${firstName.toLowerCase()}.${surname.toLowerCase()}@hotmail.com`,
@@ -102,22 +103,20 @@ const seedAuthors = () => {
       updated_at: new Date(Date.now())
     });
   }
-  return authors;
+  return users;
 }
 
 const seedAuthorsArticles = () => {
   const result = [];
   let die;
   for (k = ARTICLE_QTY; k > 0; k--) {
-    const firstCoauthor = Math.floor(Math.random() * AUTHORS_QTY) + 1;
+    const firstCoauthor = chance.integer({ min: 1, max: AUTHORS_QTY });
+    result.push({article_id: k, author_id: firstCoauthor});
     if (Math.random() < 0.333) {
-      const m = Math.floor(Math.random() * AUTHORS_QTY) + 1;
+      const m = chance.integer({ min: 1, max: AUTHORS_QTY });
       const secondCoauthor = m === firstCoauthor ? (m + 1) % AUTHORS_QTY : m;
-      result.push({article_id: k, author_id: firstCoauthor});
       result.push({article_id: k, author_id: secondCoauthor});
-    } else {
-      result.push({article_id: k, author_id: firstCoauthor});
-    }
+    } 
   }
   return result;
 }
@@ -126,7 +125,7 @@ const seedArticlesTags = () => {
   const result = [];
   for (m = ARTICLE_QTY; m > 0; m--) {
     for (n = TAGS_LIST.length; n > 0; n--) {
-      if (Math.floor(Math.random() < 0.5)) {
+      if (Math.random() < 0.5) {
         result.push({article_id: m, tag_id: n});
       }
     }
@@ -149,6 +148,26 @@ const seedPages = () => {
   return result;
 }
 
+const seedComments = () => {
+  const result = [];
+  for (let i = ARTICLE_QTY; i > 0; i--) {
+    for (let j = 3; j > 0; j--) {
+      result.unshift({
+        body: chance.paragraph(),
+        parent_comment_id: undefined,
+        publication_time: new Date(Date.now()),
+        article_id: i,
+        author_id: chance.integer({ min: 7, max: 100 }),
+        created_at: new Date(Date.now()),
+        updated_at: new Date(Date.now())
+      });
+    }
+  }
+  const random_comment_index = chance.integer({ min: 0, max: result.length })
+  console.log(`***random comment ${random_comment_index}: `, result[ random_comment_index ]);
+  return result;
+}
+
 exports.seed = function(knex, Promise) {
   // Deletes ALL existing entries
   return Promise.all([
@@ -156,7 +175,7 @@ exports.seed = function(knex, Promise) {
     knex("articles_tags").del(),
     knex("articles").del(),
     knex("tags").del(),
-    knex("authors").del(),
+    knex("users").del(),
     knex("links").del(),
     knex("categories").del(),
     knex("pages").del()
@@ -164,18 +183,21 @@ exports.seed = function(knex, Promise) {
   .then(function () {
     // Inserts seed entries
     return Promise.all([
-      knex('articles').insert(seedArticles()),
-      knex("authors").insert(seedAuthors()),
+      knex("articles").insert(seedArticles()),
+      knex("users").insert(seedUsers()),
       knex("tags").insert(TAGS_LIST),
       knex("categories").insert(CATEGORIES_LIST),
       knex("pages").insert(seedPages())
     ])
     .then(() => {
       return Promise.all([
+        knex("comments").insert(seedComments(knex)),
         knex("authors_articles").insert(seedAuthorsArticles()),
         knex("articles_tags").insert(seedArticlesTags()),
         knex("links").insert(LINKS_LIST)
       ]);
-    });
-  });
+    })
+    .catch(errorInsert => { console.error("insertions ", errorInsert); });
+  })
+  .catch(error => { console.error("outermost ", error); });
 };

@@ -11,6 +11,12 @@ app.use(morgan("combined"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+// Middleware: if it's a mutation, authenticate.
+app.use((request, response, next) => {
+  console.log("[DEBUG][request.body]", request.body, "\n");
+  next();
+});
+
 app.options("/graphql", cors()); // CORS pre-flight
 app.use("/graphql", express.json(), graphqlHTTP({
   schema,
