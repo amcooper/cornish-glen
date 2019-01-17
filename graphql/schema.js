@@ -177,7 +177,10 @@ const articleType = new GraphQLObjectType({
         args: connectionArgs,
         resolve: (article, args) => {
           return getAuthorsByArticle(article.id)
-            .then(authors => connectionFromArray(authors, args))
+            .then(authors => {
+              console.log("article's authors", authors);
+              return connectionFromArray(authors, args);
+            })
             .catch(error => { console.error(error); });
         }
       },
@@ -197,7 +200,10 @@ const articleType = new GraphQLObjectType({
         args: connectionArgs,
         resolve: (article, args) => {
           return getCommentsByArticle(article.id) 
-            .then(comments => connectionFromArray(comments, args))
+            .then(comments => {
+              console.log("article's comments: ", comments);
+              return connectionFromArray(comments, args);
+            })
             .catch(error => { console.error(error); });
         }
       }
@@ -228,8 +234,7 @@ const Query = new GraphQLObjectType({
       },
       resolve: (article, args) => {
         return getArticle(args.id)
-          .then(data => { 
-            debugger;
+          .then(data => {             
             return data[0];
           })
           .catch(error => { console.error(error); });
@@ -272,11 +277,9 @@ const commentMutation = mutationWithClientMutationId({
   outputFields: {
     comment: {
       type: commentType,
-      resolve: payload => { 
-        debugger; 
+      resolve: payload => {          
         return getComment(payload.commentId)
-          .then(data => {
-            debugger;
+          .then(data => {            
             return data[0];
           })
           .catch(error => { console.error(error); }); 
@@ -286,8 +289,7 @@ const commentMutation = mutationWithClientMutationId({
   mutateAndGetPayload: ({ body, parentCommentId, articleId, authorId }) => {
     return addComment({ body, parentCommentId, articleId, authorId })
       .then(data => { 
-        console.log("[DEBUG][commentMutation][payload] ", data[0], "\n");
-        debugger;
+        console.log("[DEBUG][commentMutation][payload] ", data[0], "\n");        
         return ({ commentId: data[0] });
       })
       .catch(error => { console.error(error); });

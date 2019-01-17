@@ -87,7 +87,6 @@ const seedArticles = () => {
       updated_at: new Date(Date.now())
     });
   }
-  debugger;
   return articles;
 }
 
