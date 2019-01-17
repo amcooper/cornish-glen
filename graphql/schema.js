@@ -177,8 +177,14 @@ const articleType = new GraphQLObjectType({
         args: connectionArgs,
         resolve: (article, args) => {
           return getAuthorsByArticle(article.id)
-            .then(authors => {
-              console.log("article's authors", authors);
+            .then(data => {
+              // There is probably a cleaner way to do this, preferably by getting cleaner data from db above.
+              const authors = data.map(obj => {
+                let newObj = Object.assign(obj, {id: obj.author_id});
+                delete newObj.author_id;
+                delete newObj.article_id;
+                return newObj;
+              });
               return connectionFromArray(authors, args);
             })
             .catch(error => { console.error(error); });
@@ -189,8 +195,12 @@ const articleType = new GraphQLObjectType({
         description: 'Article tags',
         args: connectionArgs,
         resolve: (article, args) => {
+          // You'll need to check and prob repair the tags array
           return getTagsByArticle(article.id)
-            .then(tags => connectionFromArray(tags, args))
+            .then(tags => {
+              console.log("\n\n*****\n* article's tags: ", tags);
+              return connectionFromArray(tags, args);
+            })
             .catch(error => { console.error(error); });
         }
       },
@@ -201,7 +211,6 @@ const articleType = new GraphQLObjectType({
         resolve: (article, args) => {
           return getCommentsByArticle(article.id) 
             .then(comments => {
-              console.log("article's comments: ", comments);
               return connectionFromArray(comments, args);
             })
             .catch(error => { console.error(error); });
