@@ -197,8 +197,13 @@ const articleType = new GraphQLObjectType({
         resolve: (article, args) => {
           // You'll need to check and prob repair the tags array
           return getTagsByArticle(article.id)
-            .then(tags => {
-              console.log("\n\n*****\n* article's tags: ", tags);
+            .then(data => {
+              const tags = data.map(obj => {
+                let newObj = Object.assign(obj, {id: obj.tag_id});
+                delete newObj.tag_id;
+                delete newObj.article_id;
+                return newObj;
+              });
               return connectionFromArray(tags, args);
             })
             .catch(error => { console.error(error); });
