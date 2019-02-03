@@ -153,7 +153,7 @@ const seedComments = () => {
   for (let i = ARTICLE_QTY; i > 0; i--) {
     for (let j = 3; j > 0; j--) {
       result.unshift({
-        body: chance.paragraph(),
+        body: chance.sentence(),
         parent_comment_id: undefined,
         publication_time: new Date(Date.now()),
         article_id: i,
