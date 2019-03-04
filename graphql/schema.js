@@ -115,7 +115,13 @@ const commentType = new GraphQLObjectType({
   })
 });
 
-const { connectionType: commentConnection } = connectionDefinitions({ nodeType: commentType })
+const { 
+	connectionType: commentConnection,
+  edgeType: GraphQLCommentEdge,
+} = connectionDefinitions({ 
+	name: 'Comment',
+	nodeType: commentType,
+});
 
 const tagType = new GraphQLObjectType({
   name: 'Tag',
@@ -289,12 +295,16 @@ const commentMutation = mutationWithClientMutationId({
     }
   },
   outputFields: {
-    comment: {
-      type: commentType,
+    commentEdge: {
+      type: GraphQLCommentEdge,
       resolve: payload => {          
         return getComment(payload.commentId)
           .then(data => {            
-            return data[0];
+						const comment = data[0];
+            return {
+						  cursor: cursorForObjectInConnection(getComments(), comment),
+						  node: comment,
+						}
           })
           .catch(error => { console.error(error); }); 
       }
