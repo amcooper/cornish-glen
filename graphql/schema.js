@@ -115,6 +115,7 @@ const commentType = new GraphQLObjectType({
   })
 });
 
+// TODO fix this
 const { connectionType: commentConnection } = connectionDefinitions({ nodeType: commentType })
 
 const tagType = new GraphQLObjectType({
@@ -288,8 +289,20 @@ const commentMutation = mutationWithClientMutationId({
       type: GraphQLID
     }
   },
+  /*
+     todoEdge: {
+      type: GraphQLTodoEdge,
+      resolve: ({localTodoId}) => {
+        const todo = getTodo(localTodoId);
+        return {
+          cursor: cursorForObjectInConnection(getTodos(), todo),
+          node: todo,
+        };
+      },
+    },
+  */
   outputFields: {
-    comment: {
+    commentEdge: {
       type: commentType,
       resolve: payload => {          
         return getComment(payload.commentId)
