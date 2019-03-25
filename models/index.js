@@ -1,28 +1,30 @@
 const { 
-  getArticle,
-  getArticles
+	getArticle,
+	getArticles
 } = require("./Article.js");
 
 const {
-  getAuthor,
-  getAuthorsByArticle
+	getAuthor,
+	getAuthorsByArticle
 } = require("./Author.js");
 
 const getTagsByArticle = require("./Tag.js");
 
 const {
-  getCommentsByArticle,
-  addComment,
-  getComment
+	getCommentsByArticle,
+	getCommentsQty,
+	addComment,
+	getComment
 } = require("./Comment.js");
 
 module.exports = { 
-  getArticle,
-  getArticles,
-  getAuthor,
-  getAuthorsByArticle,
-  getTagsByArticle,
-  getCommentsByArticle,
-  addComment,
-  getComment
+	getArticle,
+	getArticles,
+	getAuthor,
+	getAuthorsByArticle,
+	getTagsByArticle,
+	getCommentsByArticle,
+	getCommentsQty,
+	addComment,
+	getComment
 };
