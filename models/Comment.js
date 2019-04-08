@@ -19,7 +19,7 @@ const getCommentsByArticle = articleId => knex("comments").where("article_id", a
 const getCommentsQty = () => knex("comments").count("id");
 
 const addComment = ({ body, parentCommentId = undefined, articleId, authorId = 9 }) => {
-	debugger;
+	// debugger;
 	return knex("comments")
 		.insert({
 			body,
