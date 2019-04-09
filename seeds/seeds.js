@@ -108,8 +108,7 @@ const seedUsers = () => {
 
 const seedAuthorsArticles = () => {
   const result = [];
-  let die;
-  for (k = ARTICLE_QTY; k > 0; k--) {
+  for (let k = ARTICLE_QTY; k > 0; k--) {
     const firstCoauthor = chance.integer({ min: 1, max: AUTHORS_QTY });
     result.push({article_id: k, author_id: firstCoauthor});
     if (Math.random() < 0.333) {
@@ -123,8 +122,8 @@ const seedAuthorsArticles = () => {
 
 const seedArticlesTags = () => {
   const result = [];
-  for (m = ARTICLE_QTY; m > 0; m--) {
-    for (n = TAGS_LIST.length; n > 0; n--) {
+  for (let m = ARTICLE_QTY; m > 0; m--) {
+    for (let n = TAGS_LIST.length; n > 0; n--) {
       if (Math.random() < 0.5) {
         result.push({article_id: m, tag_id: n});
       }
@@ -135,7 +134,7 @@ const seedArticlesTags = () => {
 
 const seedPages = () => {
   const result = [];
-  for (p = 2; p > 0; p--) {
+  for (let p = 2; p > 0; p--) {
     result.push({
       title: chance.sentence(),
       subtitle: chance.sentence(),
