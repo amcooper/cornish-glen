@@ -10,7 +10,7 @@
   "scripts": {
     "flush-data": "knex migrate:rollback && knex migrate:latest && knex seed:run",
     "dev": "nodemon index.js",
-    "lint": "eslint ."
+    "lint": "$(yarn bin)/eslint ."
   },
   "dependencies": {
     "cors": "^2.8.5",
