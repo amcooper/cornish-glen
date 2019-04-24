@@ -5,58 +5,42 @@ const ARTICLE_QTY = 20;
 const USERS_QTY = 100;
 const AUTHORS_QTY = 7;
 
-const TAGS_LIST = [{
-  name: "webdev",
-  description: "webdev",
+const TAG_NAMES = ["webdev", "rust", "privacy", "linux", "random"];
+
+const TAGS_LIST = TAG_NAMES.map(tagName => ({
+  name: tagName,
+  description: tagName,
   created_at: new Date(Date.now()),
   updated_at: new Date(Date.now())
+}));
+
+const CATEGORY_NAMES = ["tech", "policy", "miscellany", "linguistics", "cartography"];
+
+const CATEGORIES_LIST = CATEGORY_NAMES.map(categoryName => ({
+  name: categoryName,
+  description: categoryName,
+  created_at: new Date(Date.now()),
+  updated_at: new Date(Date.now())
+}));
+
+const LINK_DATA = [{
+  name: "DuckDuckGo", url: "https://ddg.gg", category_id: 1
 }, {
-  name: "rust",
-  description: "rust",
-  created_at: new Date(Date.now()),
-  updated_at: new Date(Date.now())
+  name: "Democracy Now!", url: "https://democracynow.org", category_id: 2
 }, {
-  name: "privacy",
-  description: "privacy",
-  created_at: new Date(Date.now()),
-  updated_at: new Date(Date.now())
+  name: "Language Hat", url:"https://languagehat.com", category_id: 5
 }, {
-  name: "linux",
-  description: "linux",
-  created_at: new Date(Date.now()),
-  updated_at: new Date(Date.now())
+  name: "World Socialist Web Site", url: "https://wsws.org", category_id: 2
 }, {
-  name: "random",
-  description: "random",
-  created_at: new Date(Date.now()),
-  updated_at: new Date(Date.now())
+  name: "The Intercept", url: "https://theintercept.com", category_id: 2
 }];
 
-const LINKS_LIST = [{
-  name: "DuckDuckGo",
-  description: "DuckDuckGo",
-  url: "https://ddg.gg",
-  category_id: 1,
+const LINKS_LIST = LINK_DATA.map(linkItem => ({
+  ...linkItem,
+  description: linkItem.name,
   created_at: new Date(Date.now()),
   updated_at: new Date(Date.now())
-}, {
-  name: "Democracy Now!",
-  description: "DN",
-  url: "https://democracynow.org",
-  category_id: 2,
-  created_at: new Date(Date.now()),
-  updated_at: new Date(Date.now())
-}];
-
-const CATEGORIES_LIST = [{
-  name: "tech", description: "tech",
-  created_at: new Date(Date.now()),
-  updated_at: new Date(Date.now())
-}, { 
-  name: "policy", description: "policy",
-  created_at: new Date(Date.now()),
-  updated_at: new Date(Date.now())
-}];
+}));
 
 const body = () => {
   let result = "";
@@ -190,7 +174,7 @@ exports.seed = function(knex, Promise) {
     ])
     .then(() => {
       return Promise.all([
-        knex("comments").insert(seedComments(knex)),
+        knex("comments").insert(seedComments()),
         knex("authors_articles").insert(seedAuthorsArticles()),
         knex("articles_tags").insert(seedArticlesTags()),
         knex("links").insert(LINKS_LIST)

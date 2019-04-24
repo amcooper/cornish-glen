@@ -24,6 +24,7 @@ const {
 	getAuthor,
 	getAuthorsByArticle,
   getTag,
+  getTags,
 	getTagsByArticle,
 	getCommentsByArticle,
 	getCommentsQty,
@@ -263,6 +264,16 @@ const Query = new GraphQLObjectType({
 					.catch(error => { console.error(error); });
 			}
 		},
+    tags: {
+      type: tagConnection,
+      description: 'All tags',
+      args: connectionArgs,
+      resolve: (tag, args) => {
+        return getTags()
+          .then(data => { return connectionFromArray(data, args); })
+          .catch(error => { console.error(error); });
+      }
+    },
 		node: nodeField,
 	}),
 });
