@@ -23,6 +23,7 @@ const {
 	getArticles,
 	getAuthor,
 	getAuthorsByArticle,
+  getTag,
 	getTagsByArticle,
 	getCommentsByArticle,
 	getCommentsQty,
@@ -108,7 +109,7 @@ const commentType = new GraphQLObjectType({
 		author: {
 			type: authorType,
 			description: 'Commenter',
-			resolve: (comment, args) => {
+			resolve: (comment) => {
 				return getAuthor(comment.author_id)
 					.then(author => author[0])
 					.catch(error => { console.error(error); });
