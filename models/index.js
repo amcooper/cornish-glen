@@ -8,7 +8,10 @@ const {
 	getAuthorsByArticle
 } = require("./Author.js");
 
-const getTagsByArticle = require("./Tag.js");
+const { 
+  getTags,
+  getTagsByArticle 
+} = require("./Tag.js");
 
 const {
 	getCommentsByArticle,
@@ -22,6 +25,7 @@ module.exports = {
 	getArticles,
 	getAuthor,
 	getAuthorsByArticle,
+  getTags,
 	getTagsByArticle,
 	getCommentsByArticle,
 	getCommentsQty,
