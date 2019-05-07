@@ -29,7 +29,9 @@ const {
 	getCommentsByArticle,
 	getCommentsQty,
 	getComment,
-	addComment
+	addComment,
+  getCategories,
+  getLinksByCategory
 } = require("../models/index.js");
 
 const { nodeInterface, nodeField } = nodeDefinitions(
