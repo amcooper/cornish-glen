@@ -21,6 +21,10 @@ const {
 	getComment
 } = require("./Comment.js");
 
+const {
+  getCategories
+} = require("./Category.js");
+
 module.exports = { 
 	getArticle,
 	getArticles,
@@ -32,5 +36,7 @@ module.exports = {
 	getCommentsByArticle,
 	getCommentsQty,
 	addComment,
-	getComment
+  getComment,
+  getCategories
 };
+

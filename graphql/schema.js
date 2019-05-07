@@ -30,6 +30,7 @@ const {
 	getCommentsQty,
 	getComment,
 	addComment,
+  getCategory,
   getCategories,
   getLinksByCategory
 } = require("../models/index.js");
@@ -49,6 +50,9 @@ const { nodeInterface, nodeField } = nodeDefinitions(
 		if (type === "Comment") {
 			return getComment(id);
 		}
+    if (type === "Category") {
+      return getCategory(id);
+    }
 	},
 	obj => {
 		if (obj.authors) { return articleType }
@@ -272,6 +276,16 @@ const Query = new GraphQLObjectType({
       args: connectionArgs,
       resolve: (tag, args) => {
         return getTags()
+          .then(data => { return connectionFromArray(data, args); })
+          .catch(error => { console.error(error); });
+      }
+    },
+    categories: {
+      type: categoryConnection,
+      description: 'All categories',
+      args: connectionArgs,
+      resolve: (category, args) => {
+        return getCategories()
           .then(data => { return connectionFromArray(data, args); })
           .catch(error => { console.error(error); });
       }
