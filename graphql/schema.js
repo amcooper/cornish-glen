@@ -23,6 +23,7 @@ const {
 	getArticles,
 	getAuthor,
 	getAuthorsByArticle,
+  getTag,
   getTags,
 	getTagsByArticle,
 	getCommentsByArticle,
@@ -109,7 +110,7 @@ const commentType = new GraphQLObjectType({
 		author: {
 			type: authorType,
 			description: 'Commenter',
-			resolve: (comment, args) => {
+			resolve: (comment) => {
 				return getAuthor(comment.author_id)
 					.then(author => author[0])
 					.catch(error => { console.error(error); });
@@ -263,16 +264,16 @@ const Query = new GraphQLObjectType({
 					.catch(error => { console.error(error); });
 			}
 		},
-		tags: {
-			type: tagConnection,
-			description: 'All the tags',
-			args: connectionArgs,
-			resolve: (tag, args) => { 
-				return getTags()
-					.then(data => { return connectionFromArray(data, args); })
-					.catch(error => { console.error(error); }); 
-			},
-		},
+    tags: {
+      type: tagConnection,
+      description: 'All tags',
+      args: connectionArgs,
+      resolve: (tag, args) => {
+        return getTags()
+          .then(data => { return connectionFromArray(data, args); })
+          .catch(error => { console.error(error); });
+      }
+    },
 		node: nodeField,
 	}),
 });
