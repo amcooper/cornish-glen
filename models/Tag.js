@@ -1,6 +1,6 @@
 const knex = require("../config/database.js");
 
-const getTags = () => knex("tags").orderBy("name");
+const getTags = () => knex("tags").orderBy("tag_name");
 
 const getTag = id => knex("tags").where("id", id);
 

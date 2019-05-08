@@ -55,9 +55,11 @@ const { nodeInterface, nodeField } = nodeDefinitions(
     }
 	},
 	obj => {
-		if (obj.authors) { return articleType }
-			else if (obj.name) { return authorType }
+		if (obj.headline) { return articleType }
+			else if (obj.sort_name) { return authorType }
 			else if (obj.parent_comment_id) { return commentType }
+      else if (obj.cat_name) { return categoryType }
+      else if (obj.url) { return linkType }
 			else { return tagType }
 	}
 );
@@ -139,11 +141,11 @@ const tagType = new GraphQLObjectType({
 	interfaces: [ nodeInterface ],
 	fields: () => ({
 		id: globalIdField(),
-		name: {
+		tag_name: {
 			type: GraphQLString,
 			description: 'Tag name'
 		},
-		description: {
+		tag_description: {
 			type: GraphQLString,
 			description: 'Tag description'
 		}
@@ -243,6 +245,58 @@ const articleType = new GraphQLObjectType({
 
 const { connectionType: articleConnection } = connectionDefinitions({ nodeType: articleType });
 
+const linkType = new GraphQLObjectType({
+	name: 'Link',
+	description: 'Link',
+	interfaces: [ nodeInterface ],
+	fields: () => ({
+		id: globalIdField(),
+		name: {
+			type: GraphQLString,
+			description: 'Link name',
+		},
+		description: {
+			type: GraphQLString,
+			description: 'Link description'
+    },
+    url: {
+      type: GraphQLString,
+      description: 'Link url',
+    }
+	})
+});
+
+const { connectionType: linkConnection } = connectionDefinitions({ nodeType: linkType });
+
+const categoryType = new GraphQLObjectType({
+	name: 'Category',
+	description: 'Link category',
+	interfaces: [ nodeInterface ],
+	fields: () => ({
+		id: globalIdField(),
+		cat_name: {
+			type: GraphQLString,
+			description: 'Category name',
+		},
+		cat_description: {
+			type: GraphQLString,
+			description: 'Category description'
+    },
+    links: {
+      type: linkConnection,
+      description: 'Category links',
+      args: connectionArgs,
+      resolve: (link, args) => {
+        return getLinksByCategory()
+          .then(data => { return connectionFromArray(data, args); })
+          .catch(error => { console.error(error); });
+      }
+    }
+	})
+});
+
+const { connectionType: categoryConnection } = connectionDefinitions({ nodeType: categoryType });
+
 const Query = new GraphQLObjectType({
 	name: 'Query',
 	fields: () => ({
@@ -286,6 +340,18 @@ const Query = new GraphQLObjectType({
       args: connectionArgs,
       resolve: (category, args) => {
         return getCategories()
+          .then(data => { return connectionFromArray(data, args); })
+          .catch(error => { console.error(error); });
+      }
+    },
+    links: {
+      type: linkConnection,
+      description: 'Links by category',
+      args: {
+        categoryId: GraphQLID
+      },
+      resolve: (link, args) => {
+        return getLinksByCategory(args.categoryId)
           .then(data => { return connectionFromArray(data, args); })
           .catch(error => { console.error(error); });
       }

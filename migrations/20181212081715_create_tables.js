@@ -1,5 +1,4 @@
-// Check this for defaults and cascades
-
+// TODO Check this for defaults and cascades
 exports.up = function(knex, Promise) {
   return Promise.all([
     knex.schema.hasTable("articles").then( exists => {
@@ -34,8 +33,8 @@ exports.up = function(knex, Promise) {
       if (!exists) {
         return knex.schema.createTable("tags", table => {
           table.increments();
-          table.string("name");
-          table.string("description");
+          table.string("tag_name");
+          table.string("tag_description");
           table.timestamps();
         });
       }
@@ -99,8 +98,8 @@ exports.up = function(knex, Promise) {
       if (!exists) {
         return knex.schema.createTable("categories", table => {
           table.increments();
-          table.string("name");
-          table.string("description");
+          table.string("cat_name");
+          table.string("cat_description");
           table.timestamps();
         });
       }
@@ -136,3 +135,4 @@ exports.down = function(knex, Promise) {
     knex.schema.dropTableIfExists("pages")
   ])
 };
+

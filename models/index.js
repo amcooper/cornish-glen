@@ -25,6 +25,10 @@ const {
   getCategories
 } = require("./Category.js");
 
+const { 
+  getLinksByCategory
+} = require("./Link.js");
+
 module.exports = { 
 	getArticle,
 	getArticles,
@@ -37,6 +41,7 @@ module.exports = {
 	getCommentsQty,
 	addComment,
   getComment,
-  getCategories
+  getCategories,
+  getLinksByCategory
 };
 

@@ -8,8 +8,8 @@ const AUTHORS_QTY = 7;
 const TAG_NAMES = ["webdev", "rust", "privacy", "linux", "random"];
 
 const TAGS_LIST = TAG_NAMES.map(tagName => ({
-  name: tagName,
-  description: tagName,
+  tag_name: tagName,
+  tag_description: tagName,
   created_at: new Date(Date.now()),
   updated_at: new Date(Date.now())
 }));
@@ -17,8 +17,8 @@ const TAGS_LIST = TAG_NAMES.map(tagName => ({
 const CATEGORY_NAMES = ["tech", "policy", "miscellany", "linguistics", "cartography"];
 
 const CATEGORIES_LIST = CATEGORY_NAMES.map(categoryName => ({
-  name: categoryName,
-  description: categoryName,
+  cat_name: categoryName,
+  cat_description: categoryName,
   created_at: new Date(Date.now()),
   updated_at: new Date(Date.now())
 }));
