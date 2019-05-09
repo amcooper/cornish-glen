@@ -348,7 +348,7 @@ const Query = new GraphQLObjectType({
       type: linkConnection,
       description: 'Links by category',
       args: {
-        categoryId: GraphQLID
+        categoryId: { type: GraphQLID }
       },
       resolve: (link, args) => {
         return getLinksByCategory(args.categoryId)
