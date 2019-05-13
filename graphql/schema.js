@@ -239,8 +239,8 @@ const articleType = new GraphQLObjectType({
             .catch(error => { console.error(error); });
         }
       }
-  });
-}
+    });
+  }
 });
 
 const { connectionType: articleConnection } = connectionDefinitions({ nodeType: articleType });
@@ -286,8 +286,8 @@ const categoryType = new GraphQLObjectType({
       type: linkConnection,
       description: 'Category links',
       args: connectionArgs,
-      resolve: (link, args) => {
-        return getLinksByCategory()
+      resolve: (category, args) => {
+        return getLinksByCategory(category.id)
           .then(data => { return connectionFromArray(data, args); })
           .catch(error => { console.error(error); });
       }
@@ -318,9 +318,7 @@ const Query = new GraphQLObjectType({
       },
       resolve: (article, args) => {
         return getArticle(args.id)
-          .then(data => {             
-            return data[0];
-          })
+          .then(data => { return data[0]; })
           .catch(error => { console.error(error); });
       }
     },
@@ -344,11 +342,23 @@ const Query = new GraphQLObjectType({
           .catch(error => { console.error(error); });
       }
     },
+    category: {
+      type: categoryType,
+      description: 'Single category',
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve: (category, args) => {
+        return getCategory(args.id)
+          .then(data => { return data[0]; })
+          .catch(error => { console.error(error); });
+      }
+    },
     links: {
       type: linkConnection,
       description: 'Links by category',
       args: {
-        categoryId: GraphQLID
+        categoryId: { type: GraphQLID }
       },
       resolve: (link, args) => {
         return getLinksByCategory(args.categoryId)
@@ -356,8 +366,8 @@ const Query = new GraphQLObjectType({
           .catch(error => { console.error(error); });
       }
     },
-    node: nodeField,
-  }),
+    node: nodeField
+  })
 });
 
 /*
